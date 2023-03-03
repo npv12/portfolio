@@ -1,11 +1,11 @@
 import {
-  createRef,
   CSSProperties,
   ReactNode,
+  createRef,
   useEffect,
   useRef,
   useState,
-} from 'react';
+} from "react";
 
 type tagSphereProps = {
   texts: (string | ReactNode)[];
@@ -24,19 +24,19 @@ type tagSphereProps = {
 const defaultStyles = {
   getContainer: (radius: number, fullWidth: boolean, fullHeight: boolean) =>
     ({
-      position: 'relative',
-      width: fullWidth ? '100%' : `${2 * radius}px`,
-      maxWidth: '100%',
+      position: "relative",
+      width: fullWidth ? "100%" : `${2 * radius}px`,
+      maxWidth: "100%",
       minHeight: `${2 * radius}px`,
-      height: fullHeight ? '100%' : `${2 * radius}px`,
-      touchAction: 'none',
+      height: fullHeight ? "100%" : `${2 * radius}px`,
+      touchAction: "none",
     } as CSSProperties),
 };
 
 const computeInitialPosition = (
   index: number,
   textsLength: number,
-  size: number,
+  size: number
 ) => {
   const phi = Math.acos(-1 + (2 * index + 1) / textsLength);
   const theta = Math.sqrt((textsLength + 1) * Math.PI) * phi;
@@ -48,7 +48,7 @@ const computeInitialPosition = (
 };
 
 const updateItemPosition = (item: any, sc: number[], depth: number) => {
-  const newItem = { ...item, scale: '' };
+  const newItem = { ...item, scale: "" };
   const rx1 = item.x;
   const ry1 = item.y * sc[1] + item.z * -sc[0];
   const rz1 = item.y * sc[0] + item.z * sc[1];
@@ -101,17 +101,17 @@ const createItem = (
   index: number,
   textsLength: number,
   size: number,
-  itemRef: any,
+  itemRef: any
 ) => {
-  const transformOrigin = '50% 50%';
-  const transform = 'translate3d(-50%, -50%, 0) scale(1)';
+  const transformOrigin = "50% 50%";
+  const transform = "translate3d(-50%, -50%, 0) scale(1)";
   const itemStyles = {
-    willChange: 'transform, opacity, filter',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    willChange: "transform, opacity, filter",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     zIndex: index + 1,
-    filter: 'alpha(opacity=0)',
+    filter: "alpha(opacity=0)",
     opacity: 0,
     WebkitTransformOrigin: transformOrigin,
     MozTransformOrigin: transformOrigin,
@@ -138,22 +138,22 @@ const createItem = (
 
 const defaultState: tagSphereProps = {
   texts: [
-    'This',
-    'is',
-    'TagSphere.',
-    'Do',
-    'you',
-    'like',
+    "This",
+    "is",
+    "TagSphere.",
+    "Do",
+    "you",
+    "like",
     <img
       width={50}
-      src={'https://cdn.svgporn.com/logos/react.svg'}
-      alt={'Random image'}
+      src={"https://cdn.svgporn.com/logos/react.svg"}
+      alt={"Random image"}
     />,
-    'it?',
-    'Glad',
-    'to',
-    'see',
-    'you',
+    "it?",
+    "Glad",
+    "to",
+    "see",
+    "you",
   ],
   maxSpeed: 7,
   initialSpeed: 32,
@@ -191,8 +191,8 @@ export default function TagSphere(props: any) {
   useEffect(() => {
     setItems(() =>
       texts.map((text, index) =>
-        createItem(text, index, texts.length, size, itemHooks[index]),
-      ),
+        createItem(text, index, texts.length, size, itemHooks[index])
+      )
     );
   }, [texts]);
 
@@ -235,7 +235,7 @@ export default function TagSphere(props: any) {
 
       let a, b;
       if (!keepRollingAfterMouseOut && !active && !firstRender) {
-        setLessSpeed(lessSpeedCurrent => {
+        setLessSpeed((lessSpeedCurrent) => {
           const lessConstant = lessSpeed * (maxSpeed / 200);
 
           return lessSpeedCurrent - lessConstant > 0.01
@@ -319,7 +319,7 @@ export default function TagSphere(props: any) {
         setLessSpeed(() => maxSpeed);
         setFirstRender(() => false);
       }}
-      onTouchMove={e => {
+      onTouchMove={(e) => {
         if (checkTouchCoordinates(e)) {
           handleMouseMove(e.targetTouches[0]);
         } else {
@@ -330,8 +330,9 @@ export default function TagSphere(props: any) {
         useContainerInlineStyles
           ? style || defaultStyles.getContainer(radius, fullWidth, fullHeight)
           : undefined
-      }>
-      {items.map(item => item.el)}
+      }
+    >
+      {items.map((item) => item.el)}
     </div>
   );
 }
