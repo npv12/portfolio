@@ -18,15 +18,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build ",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "beautify": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\""
   },
   "browserslist": {
     "production": [
@@ -39,5 +34,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "cypress": "^12.3.0",
+    "prettier": "^2.8.3",
+    "sass": "^1.57.1"
   }
 }
