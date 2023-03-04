@@ -1,25 +1,27 @@
-import "./App.css";
+import "./App.scss";
 import Copyright from "./components/Copyright";
-import Navbar from "./components/navbar/Navbar.jsx";
+import Navbar from "./components/navbar/Navbar";
 import About from "./views/about/About";
+import Contact from "./views/contact/Contact";
 import Home from "./views/home/Home";
 import Skills from "./views/skills/Skills";
 import Work from "./views/work/Work";
-import Contact from "./views/contact/Contact";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header sticky top-0 shadow">
+    <>
+      <header className="navbar">
         <Navbar />
       </header>
-      <Home />
-      <About />
-      <Skills />
-      <Work />
-      <Contact />
-      <Copyright />
-    </div>
+      <div>
+        <Home />
+        <About />
+        <Skills />
+        <Work />
+        <Contact />
+        <Copyright />
+      </div>
+    </>
   );
 }
 

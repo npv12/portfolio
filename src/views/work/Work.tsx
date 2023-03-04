@@ -16,7 +16,7 @@ const Work = () => {
           {/* grid items */}
           <div
             style={{ backgroundImage: `url(${workingImg})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -38,7 +38,7 @@ const Work = () => {
           </div>
           <div
             style={{ backgroundImage: `url(${realEstate})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -61,7 +61,7 @@ const Work = () => {
           {/* grid items */}
           <div
             style={{ backgroundImage: `url(${workingImg})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -83,7 +83,7 @@ const Work = () => {
           </div>
           <div
             style={{ backgroundImage: `url(${realEstate})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -106,7 +106,7 @@ const Work = () => {
           {/* grid items */}
           <div
             style={{ backgroundImage: `url(${realEstate})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -128,7 +128,7 @@ const Work = () => {
           </div>
           <div
             style={{ backgroundImage: `url(${workingImg})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -151,7 +151,7 @@ const Work = () => {
           {/* grid items */}
           <div
             style={{ backgroundImage: `url(${realEstate})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">
@@ -173,7 +173,7 @@ const Work = () => {
           </div>
           <div
             style={{ backgroundImage: `url(${workingImg})` }}
-            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contenct-div p-1"
+            className="shadow-lg shadow-[#040c16] group flex rounded-md justify-center items-center mx-auto w-full contact-div p-1"
           >
             <div className="opacity-0 group-hover:opacity-100">
               <span className="uppercase text-2xl text-white tracking-wider font-bold">

@@ -1,0 +1,102 @@
+@import "../../index.scss";
+
+.topnav {
+    overflow: hidden;
+    background-color: $base;
+    position: relative;
+    width: $width;
+    height: auto;
+}
+
+.navbar {
+    @extend .flex-row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $navbar-margin;
+    padding-bottom: $navbar-margin;
+    background-color: $base;
+}
+
+.menu {
+    @extend .flex-row;
+    margin: 25px;
+}
+
+.item {
+    display: inline-block;
+    position: relative;
+    margin: 0 20px;
+    color: $subtext0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: large;
+}
+
+.item:hover {
+    color: $text;
+}
+
+.item:after {
+    content: '';
+    color: $text;
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: -10px;
+    left: 0;
+    background-color: $text;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+.item:hover:after {
+    transform: scaleX(1);
+    color: $text;
+    transform-origin: bottom left;
+}
+
+.name-tag {
+    @extend .item;
+    font-size: x-large;
+    font-weight: bolder;
+    color: $text;
+}
+
+.icon {
+    color: $subtext0;
+    border-radius: 100%;
+    border: 2px solid $surface2;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon:hover {
+    border: 2px solid $text;
+}
+
+.hamburger-hidden {
+    display: none;
+}
+
+.hamburger {
+    display: block;
+    margin-top: $margin * 1.35;
+}
+
+.hamburger a {
+    color: $text;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    display: block;
+}
+
+.hamburger a:hover {
+    background-color: $surface0;
+    color: $text;
+    border-radius: 10px 10px 10px 10px;
+}

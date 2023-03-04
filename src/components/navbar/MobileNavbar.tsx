@@ -1,0 +1,38 @@
+import { Rotate as Hamburger } from "hamburger-react";
+import { useState } from "react";
+import { HiOutlineMoon } from "react-icons/hi";
+
+import "./navbar.scss";
+import NavLink from "./NavLink";
+
+export default function MobileNavbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="topnav">
+      <div className="navbar">
+        <p className="name-tag">Nedungadi Pranav V</p>
+        <div className="flex-row">
+          <div className="icon m2">
+            <Hamburger
+              toggled={isOpen}
+              toggle={() => {
+                setIsOpen(!isOpen);
+              }}
+            />
+          </div>
+          <div className="icon m2">
+            <HiOutlineMoon size={30} />
+          </div>
+        </div>
+      </div>
+      <div className={isOpen ? "hamburger" : "hamburger-hidden"}>
+        <NavLink navlink="home">Home</NavLink>
+        <NavLink navlink="about">About</NavLink>
+        <NavLink navlink="skills">Skills</NavLink>
+        <NavLink navlink="work">Work</NavLink>
+        <NavLink navlink="contact">Contact</NavLink>
+      </div>
+    </div>
+  );
+}
