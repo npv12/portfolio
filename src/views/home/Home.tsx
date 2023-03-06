@@ -1,10 +1,11 @@
 import HomeLogo from "../../assets/home-main.svg";
 import "../../button-fill.scss";
+import { handleClickScroll } from "../../helper/util";
 import "./Home.scss";
 
 const Home = () => {
   return (
-    <div>
+    <div id="home">
       <div className="home-container">
         <div className="home-text-container">
           <p className="text">
@@ -23,7 +24,7 @@ const Home = () => {
           <div
             className="home-button-dark m2 mt5"
             onClick={() => {
-              console.log("clicked");
+              handleClickScroll("work");
             }}
           >
             View work
@@ -37,7 +38,13 @@ const Home = () => {
         />
       </div>
       <div className="home-more-container">
-        <button type="button" className="w-btn-circle w-btn-circle--close mr5">
+        <button
+          type="button"
+          className="w-btn-circle w-btn-circle--close mr5"
+          onClick={() => {
+            handleClickScroll("about");
+          }}
+        >
           <div className="btn-circle-container">
             <svg
               version="1.1"

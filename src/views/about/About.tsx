@@ -5,7 +5,7 @@ import "./about.scss";
 
 const About = () => {
   return (
-    <>
+    <div id="about">
       <p className="text">About</p>
       <div className="about-container">
         <div className="about-container-info">
@@ -28,9 +28,9 @@ const About = () => {
             up to date with the latest trends in the field.
           </p>
         </div>
-        <TagSphere skills={allSkills}/>
+        <TagSphere skills={allSkills} />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,12 +1,20 @@
 import { HiOutlineMoon } from "react-icons/hi";
 
+import { handleClickScroll } from "../../helper/util";
 import NavLink from "./NavLink";
 import "./navbar.scss";
 
 export default function DesktopNavbar() {
   return (
     <div className="navbar">
-      <p className="name-tag">Nedungadi Pranav V</p>
+      <p
+        className="name-tag"
+        onClick={() => {
+          handleClickScroll("home");
+        }}
+      >
+        Nedungadi Pranav V
+      </p>
       <div className="menu">
         <NavLink navlink="home" classname="item">
           Home
