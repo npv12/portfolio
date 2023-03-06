@@ -2,8 +2,8 @@ import { Rotate as Hamburger } from "hamburger-react";
 import { useState } from "react";
 import { HiOutlineMoon } from "react-icons/hi";
 
-import "./navbar.scss";
 import NavLink from "./NavLink";
+import "./navbar.scss";
 
 export default function MobileNavbar() {
   const [isOpen, setIsOpen] = useState(false);

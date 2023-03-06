@@ -36,6 +36,11 @@ $navbar-margin: 1%;
     flex-direction: row;
 }
 
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
 .m2 {
     margin: 2px;
 }

@@ -1,0 +1,83 @@
+@import "./index.scss";
+
+.icon {
+    color: $subtext0;
+    border-radius: 100%;
+    border: 2px solid $surface2;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon:hover {
+    border: 2px solid $text;
+}
+
+
+// Filling circle
+@mixin btn-circle {
+    &:hover {
+        .btn-circle-prog {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    .btn-circle-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 56px;
+        height: 56px;
+        transform: rotate(-90deg);
+    }
+
+    .btn-circle-prog {
+        stroke-dasharray: 175.929;
+        stroke-dashoffset: 175.929;
+        transition: all 0.5s ease-out;
+    }
+}
+
+@mixin btn-circle-svg($borderColor: $surface2, $borderColorHover: $text) {
+    .btn-circle {
+        stroke: $borderColor;
+    }
+
+    .btn-circle-prog {
+        stroke: $borderColorHover;
+    }
+}
+
+button.w-btn-circle {
+    position: relative;
+    //svg size
+    width: 56px;
+    height: 56px;
+    border-radius: 100%;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    color: transparent;
+    outline: none;
+    outline-color: transparent;
+    @include btn-circle();
+    @include btn-circle-svg();
+
+    &--close {
+        @include btn-circle-svg($surface2, $text);
+
+        &:before {
+            font-family: 'Material Icons';
+            content: "↓";
+            color: $text;
+            font-size: 24px
+        }
+    }
+}
+
+.w-btn-circle:hover {
+    translate: 0px 5px;
+}

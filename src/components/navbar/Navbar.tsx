@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import "./navbar.scss";
+import "../../button-fill.scss";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
+import "./navbar.scss";
 
 export default function Navbar() {
   const [width, setWidth] = useState<number>(window.innerWidth);
@@ -21,4 +22,4 @@ export default function Navbar() {
   const isMobile = width <= 1000;
 
   return isMobile ? <MobileNavbar /> : <DesktopNavbar />;
-};
+}
