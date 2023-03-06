@@ -1,0 +1,14 @@
+@import "../../index.scss";
+
+.about-container {
+    @extend .flex-row;
+    justify-content: space-between;
+    align-content: center;
+
+}
+
+.about-container-info {
+    @extend .flex-col;
+    width: 50%;
+    text-align: justify;
+}

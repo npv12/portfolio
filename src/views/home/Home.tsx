@@ -5,15 +5,15 @@ import "./Home.scss";
 const Home = () => {
   return (
     <div>
-      <div className="container">
-        <div className="text-container">
+      <div className="home-container">
+        <div className="home-text-container">
           <p className="text">
             I am Pranav, a{" "}
-            <div className="gradient-text">full stack developer </div>
-            and an <p className="gradient-text">open sourcer</p>
+            <div className="gradient-text-red">full stack developer </div>
+            and an <p className="gradient-text-red">open sourcer</p>
           </p>
           <div
-            className="button-light m2 mb5"
+            className="home-button-light m2 mb5"
             onClick={() => {
               console.log("clicked");
             }}
@@ -21,7 +21,7 @@ const Home = () => {
             Download CV
           </div>
           <div
-            className="button-dark m2 mt5"
+            className="home-button-dark m2 mt5"
             onClick={() => {
               console.log("clicked");
             }}
@@ -36,7 +36,7 @@ const Home = () => {
           style={{ maxHeight: "650px" }}
         />
       </div>
-      <div className="more-container">
+      <div className="home-more-container">
         <button type="button" className="w-btn-circle w-btn-circle--close mr5">
           <div className="btn-circle-container">
             <svg

@@ -1,9 +1,19 @@
 @import "./index.scss";
 
 .navbar {
-  position:fixed;
-  top:0;
-  width:$width;
-  z-index:100;
+  position: fixed;
+  top: 0;
+  width: $width*1.25;
+  z-index: 100;
   background-color: $base;
+
+  margin-left: $margin-horizontal/4;
+  margin-bottom: $margin-vertical;
+}
+
+.container {
+  margin-top: $margin-vertical;
+  margin-left: $margin-horizontal;
+  margin-right: $margin-horizontal;
+  margin-bottom: $margin-vertical;
 }

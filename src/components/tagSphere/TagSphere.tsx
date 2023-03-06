@@ -8,7 +8,7 @@ import {
 } from "react";
 
 type tagSphereProps = {
-  texts: (string | ReactNode)[];
+  skills: string[];
   radius?: number;
   maxSpeed: number;
   initialSpeed: number;
@@ -136,26 +136,27 @@ const createItem = (
   };
 };
 
+const fetchIconFromText = (text: string) => {
+  /**
+   * Fetches all logos from https://cdn.svgporn.com
+   * Handle special cases like C++
+   */
+
+  const baseUrl = "https://cdn.svgporn.com/logos";
+
+  switch (text.toLowerCase()) {
+    case "c++":
+      return `${baseUrl}/c-plusplus.svg`;
+    case "mongodb":
+      return `${baseUrl}/mongodb-icon.svg`;
+    default:
+      return `${baseUrl}/${text.toLowerCase()}.svg`;
+  }
+};
+
 const defaultState: tagSphereProps = {
-  texts: [
-    "This",
-    "is",
-    "TagSphere.",
-    "Do",
-    "you",
-    "like",
-    <img
-      width={50}
-      src={"https://cdn.svgporn.com/logos/react.svg"}
-      alt={"Random image"}
-    />,
-    "it?",
-    "Glad",
-    "to",
-    "see",
-    "you",
-  ],
-  maxSpeed: 7,
+  skills: ["python", "java", "C++", "C", "mongoDB", "go", "rust"],
+  maxSpeed: 4,
   initialSpeed: 32,
   initialDirection: 135,
   keepRollingAfterMouseOut: false,
@@ -168,7 +169,7 @@ export default function TagSphere(props: any) {
   const {
     maxSpeed,
     initialSpeed,
-    texts,
+    skills,
     initialDirection,
     keepRollingAfterMouseOut,
     fullHeight,
@@ -180,21 +181,35 @@ export default function TagSphere(props: any) {
   let radius = props.radius;
 
   if (!radius) {
-    radius = texts.length * 15;
+    radius = skills.length * 15;
   }
 
   const depth = 2 * radius;
   const size = 1.5 * radius;
-  const itemHooks = texts.map(() => createRef());
+  const itemHooks = skills.map(() => createRef());
   const [items, setItems]: [any[], any] = useState([]);
 
   useEffect(() => {
     setItems(() =>
-      texts.map((text, index) =>
-        createItem(text, index, texts.length, size, itemHooks[index])
-      )
+      skills.map((skill, index) => {
+        const skillImg = (
+          <img
+            width={50}
+            height={50}
+            src={fetchIconFromText(skill)}
+            alt={"Random image"}
+          />
+        );
+        return createItem(
+          skillImg,
+          index,
+          skills.length,
+          size,
+          itemHooks[index]
+        );
+      })
     );
-  }, [texts]);
+  }, [skills]);
 
   const containerRef = useRef(null);
   const [firstRender, setFirstRender] = useState(true);

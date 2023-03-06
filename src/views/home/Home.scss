@@ -1,44 +1,22 @@
 @import "../../index.scss";
-@import "../../components/navbar/navbar.scss";
+@import "../../text.scss";
 
-.text {
-    font-size: 50px;
-    color: $text;
-    font-weight: bold;
-}
-
-.subText {
-    font-size: 20px;
-    color: $subtext1;
-}
-
-.container {
+.home-container {
     @extend .flex-row;
     justify-content: space-between;
-    margin-left: 5%;
-    margin-right: 5%;
     align-items: center;
 }
 
-.text-container {
+.home-text-container {
     width: 40%;
     text-align: justify;
 }
 
-.more-container {
+.home-more-container {
     @extend .flex-row;
 }
 
-.gradient-text {
-    @extend .text;
-    display: inline;
-    background: linear-gradient(to right, $red,
-            $maroon, $peach, $yellow);
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-}
-
-.button-light {
+.home-button-light {
     background-color: $text;
     color: $base;
     font-size: 18px;
@@ -53,13 +31,13 @@
     max-width: 150px;
 }
 
-.button-dark {
-    @extend .button-light;
+.home-button-dark {
+    @extend .home-button-light;
     background-color: $base;
     color: $text;
     border: 2px solid $surface2;
 }
 
-.button-dark:hover {
+.home-button-dark:hover {
     border: 2px solid $text;
 }

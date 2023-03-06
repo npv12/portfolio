@@ -1,0 +1,22 @@
+@import "./index.scss";
+
+.text {
+    font-size: 50px;
+    color: $text;
+    font-weight: bold;
+}
+
+.subText {
+    font-size: 20px;
+    color: $subtext1;
+}
+
+
+.gradient-text-red {
+    @extend .text;
+    display: inline;
+    background: linear-gradient(to right, $red,
+            $maroon, $peach, $yellow);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
