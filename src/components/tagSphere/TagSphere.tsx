@@ -19,7 +19,7 @@ export default function TagSphere(props: any) {
   let radius = props.radius;
 
   if (!radius) {
-    radius = skills.length * 15;
+    radius = skills.length * 10;
   }
 
   const depth = 2 * radius;

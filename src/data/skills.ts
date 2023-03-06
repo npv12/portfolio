@@ -10,25 +10,22 @@ export const languages = [
 ];
 export const uiFrameworkOrComponents = [
   "TailwindCSS",
-  "Styled Components",
   "Material UI",
   "Bootstrap",
 ];
 export const frameworkOrLibraries = [
   "Sass",
-  "ReactJs",
+  "React",
   "NextJs",
-  "VueJs",
+  "Vue",
   "Svelte",
   "NodeJs",
-  "ExpressJs",
 ];
 export const databases = ["Firebase", "MariaDB", "MongoDB", "MySQL"];
 export const others = [
   "Figma",
   "VsCode",
-  "Framer Motion",
-  "Vite",
+  "ViteJS",
   "Linux",
   "RHEL",
 ];

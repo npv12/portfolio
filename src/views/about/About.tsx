@@ -1,4 +1,5 @@
 import TagSphere from "../../components/tagSphere/TagSphere";
+import { allSkills } from "../../data/skills";
 import "../../text.scss";
 import "./about.scss";
 
@@ -27,7 +28,7 @@ const About = () => {
             up to date with the latest trends in the field.
           </p>
         </div>
-        <TagSphere />
+        <TagSphere skills={allSkills}/>
       </div>
     </>
   );

@@ -8,11 +8,23 @@ export const fetchIconFromText = (text: string) => {
 
   const baseUrl = "https://cdn.svgporn.com/logos";
 
+  if (text.includes(" ")) {
+    text = text.replace(" ", "-")
+  }
+
   switch (text.toLowerCase()) {
     case "c++":
       return `${baseUrl}/c-plusplus.svg`;
     case "mongodb":
       return `${baseUrl}/mongodb-icon.svg`;
+    case "rhel":
+        return `${baseUrl}/redhat-icon.svg`;
+    case "linux":
+        return `${baseUrl}/linux-tux.svg`;
+    case "vscode":
+        return `${baseUrl}/visual-studio-code.svg`;
+    case "svelte":
+        return `${baseUrl}/svelte-icon.svg`;
     default:
       return `${baseUrl}/${text.toLowerCase()}.svg`;
   }
