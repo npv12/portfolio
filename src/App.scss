@@ -1,19 +1,9 @@
 @import "./index.scss";
 
-body {
-  background-color: $base;
-  margin: $margin;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
 .navbar {
   position:fixed;
   top:0;
   width:$width;
   z-index:100;
   background-color: $base;
-}
-
-.body {
-  margin-top: 2*$navbar-margin;
 }

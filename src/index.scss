@@ -25,11 +25,21 @@ $base: #1e1e2e;
 $mantle: #181825;
 $crust: #11111b;
 
-
-$margin: 10%;
-$width: 100% - 2*$margin;
+$margin: 5%;
+$margin-horizontal: 10%;
+$margin-vertical: 5%;
+$width: 100% - 2*$margin-horizontal;
 
 $navbar-margin: 1%;
+
+body {
+    background-color: $base;
+    margin-top: $margin-vertical;
+    margin-left: $margin-horizontal;
+    margin-right: $margin-horizontal;
+    margin-bottom: $margin-vertical;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
 .flex-row {
     display: flex;

@@ -1,9 +1,3 @@
-import {
-  HiArrowDown,
-  HiOutlineArrowNarrowRight,
-  HiOutlineMoon,
-} from "react-icons/hi";
-
 import HomeLogo from "../../assets/home-main.svg";
 import "../../button-fill.scss";
 import "./Home.scss";
