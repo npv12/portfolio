@@ -14,6 +14,7 @@
 
 .icon:hover {
     border: 2px solid $text;
+    color: $text;
 }
 
 
@@ -67,7 +68,7 @@ button.w-btn-circle {
     @include btn-circle-svg();
 
     &--close {
-        @include btn-circle-svg($surface2, $text);
+        @include btn-circle-svg($surface2, $red);
 
         &:before {
             font-family: 'Material Icons';

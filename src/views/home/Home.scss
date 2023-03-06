@@ -17,8 +17,8 @@
 }
 
 .home-button-light {
-    background-color: $text;
-    color: $base;
+    background-color: $base;
+    color: $red;
     font-size: 18px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     text-align: center;
@@ -29,6 +29,12 @@
     padding-right: 40px;
     border-radius: 100px;
     max-width: 150px;
+    border: 2px solid $red;
+}
+
+.home-button-light:hover {
+    background-color: $red;
+    color: $base;
 }
 
 .home-button-dark {
@@ -39,5 +45,5 @@
 }
 
 .home-button-dark:hover {
-    border: 2px solid $text;
+    border: 2px solid $red;
 }
