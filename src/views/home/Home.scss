@@ -1,0 +1,74 @@
+@import "../../index.scss";
+@import "../../components/navbar/navbar.scss";
+
+.text {
+    font-size: 50px;
+    color: $text;
+    font-weight: bold;
+}
+
+.subText {
+    font-size: 20px;
+    color: $subtext1;
+    margin-bottom: 5%;
+}
+
+.container {
+    @extend .flex-row;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-container {
+    width: 40%;
+    text-align: justify;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.more-container {
+    @extend .flex-row;
+    align-self: center;
+}
+
+.gradient-text {
+    @extend .text;
+    display: inline;
+    background: linear-gradient(to right, $red,
+            $maroon, $peach, $yellow);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.button-light {
+    background-color: $text;
+    color: $base;
+    font-size: 18px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    text-align: center;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 100px;
+    max-width: 150px;
+}
+
+.button-dark {
+    @extend .button-light;
+    background-color: $base;
+    color: $text;
+    border: 2px solid $surface2;
+}
+
+.button-dark:hover {
+    border: 2px solid $text;
+}
+
+.icon:hover {
+    margin-top: 5px;
+}
