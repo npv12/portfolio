@@ -1,0 +1,41 @@
+/* @import "./index.scss"; */
+
+.text {
+  font-size: 50px;
+  color: #333; /* Assuming $text is a dark gray color */
+  font-weight: bold;
+}
+
+.subText {
+  font-size: 20px;
+  color: #888; /* Assuming $subtext1 is a light gray color */
+}
+
+
+.subTitleText {
+    font-size: 40px;
+    color: #888; /* Assuming $subtext1 is a light gray color */
+}
+
+.gradient-text-red {
+  display: inline;
+  background: linear-gradient(to right, #ff0000, #800000, #ffc996, #ffff00); /* Assuming $red, $maroon, $peach, $yellow are hexadecimal color values */
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-size: 50px;
+  font-weight: bold;
+  color: #333;
+}
+
+.slide-in-text {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  
+  .slide-in-text.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
