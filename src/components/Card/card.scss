@@ -2,8 +2,8 @@
 
 .card {
     display: flex;
-    justify-content: center;
-    align-items: bottom;
+    justify-content:flex-end;
+    align-items:center;
     margin-top: 150px;
     height: 500px;
     width: 300px;
@@ -12,15 +12,13 @@
 
 }
 
-
 .card:hover {
     transform: scale(1.05); // Zoom in by 5% on hover
   }
 
-.text {
+.card-text {
     display: flex;
     color: $text;
-    align-items:flex-end;
     font-size: 30px ;
     font-weight:bold;
 }

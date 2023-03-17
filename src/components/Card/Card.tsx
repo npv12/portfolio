@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { conflicts } from "yargs";
 import tailwind from "../../assets/image.jpg";
 import "./card.scss";
 
@@ -7,10 +9,14 @@ interface IProps {
 }
 
 const Card = () => {
+  const logfn = ()=>{
+    console.log("click");
+  }
   return (
-    <div style={{ backgroundImage: `url(${tailwind})` }} className="card">
-      <p className="text">HEY</p>
-    </div>
+
+    <Link style={{ backgroundImage: `url(${tailwind})` }} className="card" to="/CardRoute">
+      <p className="card-text">HEY</p>
+    </Link>
   );
 };
 
