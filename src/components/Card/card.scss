@@ -1,0 +1,15 @@
+@import "../../index.scss";
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: bottom;
+    height: 500px;
+    width: 300px;
+    border-radius: 35px;
+}
+
+.text {
+    display: flex;
+    color: $text;
+}

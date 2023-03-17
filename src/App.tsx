@@ -1,4 +1,5 @@
 import "./App.scss";
+import Card from "./components/Card/Card";
 import Copyright from "./components/Copyright";
 import Navbar from "./components/navbar/Navbar";
 import About from "./views/about/About";
@@ -14,12 +15,7 @@ function App() {
         <Navbar />
       </header>
       <div className="container">
-        <Home />
-        <About />
-        <Skills />
-        <Work />
-        <Contact />
-        <Copyright />
+        <Card/>
       </div>
     </>
   );
