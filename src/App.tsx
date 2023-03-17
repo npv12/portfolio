@@ -1,22 +1,22 @@
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+
 import "./App.scss";
-import Card from "./components/Card/Card";
-import Copyright from "./components/Copyright";
+import HomePage from "./components/Homepage";
 import Navbar from "./components/navbar/Navbar";
-import About from "./views/about/About";
-import Contact from "./views/contact/Contact";
-import Home from "./views/home/Home";
-import Skills from "./views/skills/Skills";
-import Work from "./views/work/Work";
 
 function App() {
   return (
     <>
-      <header className="navbar">
-        <Navbar />
-      </header>
-      <div className="container">
-        <Card/>
-      </div>
+      <Router>
+        <header className="navbar">
+          <Navbar />
+        </header>
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<HomePage />}/>
+          </Routes>
+        </div>
+      </Router>
     </>
   );
 }

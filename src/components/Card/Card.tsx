@@ -6,7 +6,7 @@ interface IProps {
   source: { dominantColor: string; thumbnail: string };
 }
 
-const LoadingImage = () => {
+const Card = () => {
   return (
     <div style={{ backgroundImage: `url(${tailwind})` }} className="card">
       <p className="text">HEY</p>
@@ -14,4 +14,4 @@ const LoadingImage = () => {
   );
 };
 
-export default LoadingImage;
+export default Card;

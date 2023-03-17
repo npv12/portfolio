@@ -4,12 +4,23 @@
     display: flex;
     justify-content: center;
     align-items: bottom;
+    margin-top: 150px;
     height: 500px;
     width: 300px;
     border-radius: 35px;
+    transition: transform 0.3s ease-in-out; // Add a transition for smooth animation   
+
 }
+
+
+.card:hover {
+    transform: scale(1.05); // Zoom in by 5% on hover
+  }
 
 .text {
     display: flex;
     color: $text;
+    align-items:flex-end;
+    font-size: 30px ;
+    font-weight:bold;
 }
