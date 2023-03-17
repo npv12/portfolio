@@ -86,7 +86,7 @@ export const updateItemPosition = (item: any, sc: number[], depth: number) => {
 };
 
 export const createItem = (
-  text: ReactNode,
+  item: ReactNode,
   index: number,
   textsLength: number,
   size: number,
@@ -114,7 +114,7 @@ export const createItem = (
   // @ts-ignore
   const itemEl = (
     <span ref={itemRef} key={index} style={itemStyles}>
-      {text}
+      {item}
     </span>
   );
 
