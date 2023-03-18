@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { conflicts } from "yargs";
 import tailwind from "../../assets/image.jpg";
-import flipkart from "../Projects/Flipkart/images/titleImage.jpg"
-import "./card.scss";
+import flipkart from "./images/titleImage.jpg"
+import "./Flipkart.scss";
 
 
 interface IProps {
@@ -10,14 +10,14 @@ interface IProps {
   source: { dominantColor: string; thumbnail: string };
 }
 
-const Card = () => {
+const FlipkartCard = () => {
   const logfn = ()=>{
     console.log("click");
   }
   return (
     <>
 
-    <Link style={{ backgroundImage: `url(${tailwind})` }} className="card" to="/CardRoute">
+    <Link style={{ backgroundImage: `url(${flipkart})` }} className="card" to="/FlipkartRoute">
       <p className="card-text">Flipkart GRiD 3.0</p>
     </Link>
     </>
@@ -25,4 +25,4 @@ const Card = () => {
   );
 };
 
-export default Card;
+export default FlipkartCard;
