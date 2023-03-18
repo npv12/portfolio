@@ -3,6 +3,7 @@ import { HiOutlineMoon } from "react-icons/hi";
 import { handleClickScroll } from "../../helper/util";
 import NavLink from "./NavLink";
 import "./navbar.scss";
+import { Link } from "react-router-dom";
 
 export default function DesktopNavbar() {
   return (
