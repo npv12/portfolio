@@ -1,3 +1,5 @@
+'use client';
+
 const setCookie = (name: string, value: string) => {
     if (!name || !value) return;
     document.cookie = `${name}=${value}; path=/; max-age=${60 * 60 * 24 * 7}`;
@@ -5,7 +7,8 @@ const setCookie = (name: string, value: string) => {
 
 const getCookie = (name: string) => {
     const nameEQ = `${name}=`;
-    const ca = document?.cookie.split(";");
+    if (typeof document === 'undefined') return null;
+    const ca = document.cookie.split(";");
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
         while (c.charAt(0) === " ") c = c.substring(1, c.length);
@@ -22,10 +25,10 @@ const getCookie = (name: string) => {
  */
 export const getTheme = () => {
     const cookieTheme = getCookie('theme');
-    console.log(cookieTheme);
     if (cookieTheme) {
         return cookieTheme;
     }
+    // purposefully thor an error if it is being served in SSR
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         return 'dark';
     }

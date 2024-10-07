@@ -36,7 +36,7 @@ const GlowingCircles: FC<GlowingCirclesProps> = ({
         margin: "auto",
       };
     return {
-        left: position
+        left: `${position}%`
     }
   };
   return (

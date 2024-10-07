@@ -15,7 +15,7 @@ export default function Introduction() {
   return (
     <div id="intro" className="min-h-screen flex flex-col justify-center p-20">
       {gradients}
-      {/* <GlowingCircles maxRadius={712} position={650} /> */}
+      <GlowingCircles maxRadius={712} position={30} />
       <Head>
         <title>Personal Introduction</title>
       </Head>
