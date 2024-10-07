@@ -1,5 +1,6 @@
 import GlowingCircles from "@/components/GlowingCircles/circles";
 import useGradientArtifacts from "@/components/GradientCreator/gradient";
+import { NAME } from "@/data/basic";
 import Head from "next/head";
 import {
   FaDownload,
@@ -12,16 +13,16 @@ import {
 export default function Introduction() {
   const gradients = useGradientArtifacts();
   return (
-    <div className="min-h-screen flex flex-col justify-center p-20">
+    <div id="intro" className="min-h-screen flex flex-col justify-center p-20">
       {gradients}
-      <GlowingCircles maxRadius={712} position={650} />
+      {/* <GlowingCircles maxRadius={712} position={650} /> */}
       <Head>
         <title>Personal Introduction</title>
       </Head>
       <div className="mb-4">
         <h1 className="text-6xl font-bold">Hello! I'm</h1>
         <h2 className="text-8xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-          Pranav Nedungadi
+          {NAME}
         </h2>
       </div>
       <p className="mt-4 text-2xl">
