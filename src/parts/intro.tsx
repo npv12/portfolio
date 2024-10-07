@@ -1,3 +1,4 @@
+import GlowingCircles from "@/components/GlowingCircles/circles";
 import useGradientArtifacts from "@/components/GradientCreator/gradient";
 import Head from "next/head";
 import {
@@ -13,6 +14,7 @@ export default function Introduction() {
   return (
     <div className="min-h-screen flex flex-col justify-center p-20">
       {gradients}
+      <GlowingCircles maxRadius={712} position={650} />
       <Head>
         <title>Personal Introduction</title>
       </Head>
