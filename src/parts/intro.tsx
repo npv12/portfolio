@@ -1,6 +1,6 @@
 import GlowingCircles from "@/components/GlowingCircles/circles";
 import useGradientArtifacts from "@/components/GradientCreator/gradient";
-import { NAME } from "@/data/basic";
+import { COMPANY, NAME } from "@/data/basic";
 import Head from "next/head";
 import {
   FaDownload,
@@ -13,7 +13,7 @@ import {
 export default function Introduction() {
   const gradients = useGradientArtifacts();
   return (
-    <div id="intro" className="min-h-screen flex flex-col justify-center p-20">
+    <div id="intro" className="min-h-screen flex flex-col justify-center">
       {gradients}
       <GlowingCircles maxRadius={712} position={30} />
       <Head>
@@ -26,7 +26,7 @@ export default function Introduction() {
         </h2>
       </div>
       <p className="mt-4 text-2xl">
-        I am a Full Stack Developer working at Blaze (YC W22)
+        I am a Full Stack Developer working at {COMPANY}
       </p>
       <div className="flex space-x-4 mt-6">
         <a

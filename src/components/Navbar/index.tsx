@@ -83,7 +83,7 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu dropdown-content bg-base-200 rounded-box z-[1] mt-4 w-96 overflow-y-auto p-2 shadow"
+              className="menu dropdown-content bg-base-200 rounded-box mt-4 w-96 overflow-y-auto p-2 shadow z-50"
               style={{ maxHeight: "calc(100vh - 10rem)" }}
             >
               {themes.map((t) => (

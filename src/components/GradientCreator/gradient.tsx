@@ -51,10 +51,9 @@ function useGradientArtifacts({
       const conic = Math.random() < 0.5;
       const small = Math.random() < 0.5;
 
-      top = Math.min(
-        top,
-        heightMultiplier * (window.innerHeight / window.innerWidth) * 100
-      );
+      top = Math.min(top, (window.innerHeight / window.innerWidth) * window.innerWidth);
+      // multiple the innerheight by heightMultiplier - 1 and add it to the top;
+      top = (window.innerHeight * (heightMultiplier - 1)) + top;
       left = Math.min(left, 100);
 
       gradients.push({
@@ -74,7 +73,7 @@ function useGradientArtifacts({
       key={index}
       className="absolute bg-gradient-to-r from-primary to-accent rounded-full blur-[90px] z-[-1]"
       style={{
-        top: `${gradient.top}%`,
+        top: `${gradient.top}px`,
         left: `${gradient.left}%`,
         width: `${gradient.size}px`,
         height: `${gradient.size}px`,
