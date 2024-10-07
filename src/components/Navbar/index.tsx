@@ -22,7 +22,7 @@ const Navbar = () => {
   ];
 
   const scrollToSection = (section: string) => {
-    const element = document.getElementById(section);
+    const element = document?.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
@@ -75,7 +75,7 @@ const Navbar = () => {
               role="button"
               className="btn btn-ghost rounded-btn"
             >
-              <BiPalette className="ml-2" />
+              <BiPalette/>
               {theme
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -83,7 +83,8 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow"
+              className="menu dropdown-content bg-base-200 rounded-box z-[1] mt-4 w-96 overflow-y-auto p-2 shadow"
+              style={{ maxHeight: "calc(100vh - 10rem)" }}
             >
               {themes.map((t) => (
                 <li key={t}>

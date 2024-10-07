@@ -8,4 +8,5 @@ export interface Gradient {
 
 export interface props {
   maxGradients: number;
+  heightMultiplier: number;
 }

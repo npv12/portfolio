@@ -5,7 +5,7 @@ const setCookie = (name: string, value: string) => {
 
 const getCookie = (name: string) => {
     const nameEQ = `${name}=`;
-    const ca = document.cookie.split(";");
+    const ca = document?.cookie.split(";");
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
         while (c.charAt(0) === " ") c = c.substring(1, c.length);

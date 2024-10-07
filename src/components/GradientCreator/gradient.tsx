@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 
 import { Gradient, props } from "./types";
 
+const defaultProps = {
+  maxGradients: 3,
+  heightMultiplier: 1,
+};
+
 /**
  * Creates a set of random gradient artifacts to be used in the background of
  * the page.
@@ -17,7 +22,10 @@ import { Gradient, props } from "./types";
  * artifacts to generate.
  * @returns {JSX.Element[]} The generated gradient artifacts.
  */
-function useGradientArtifacts({ maxGradients }: props = { maxGradients: 3 }) {
+function useGradientArtifacts({
+  maxGradients,
+  heightMultiplier,
+}: props = defaultProps) {
   const [gradients, setGradients] = useState<Gradient[]>([]);
 
   useEffect(() => {
@@ -43,7 +51,10 @@ function useGradientArtifacts({ maxGradients }: props = { maxGradients: 3 }) {
       const conic = Math.random() < 0.5;
       const small = Math.random() < 0.5;
 
-      top = Math.min(top, (window.innerHeight / window.innerWidth) * 100);
+      top = Math.min(
+        top,
+        heightMultiplier * (window.innerHeight / window.innerWidth) * 100
+      );
       left = Math.min(left, 100);
 
       gradients.push({
