@@ -20,12 +20,12 @@ export default function Introduction() {
         <title>Personal Introduction</title>
       </Head>
       <div className="mb-4">
-        <h1 className="text-6xl font-bold">Hello! I&lsquo;m</h1>
-        <h2 className="text-8xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+        <h1 className="lg:text-6xl text-xl font-bold">Hello! I&lsquo;m</h1>
+        <h2 className=" lg:text-8xl text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
           {NAME}
         </h2>
       </div>
-      <p className="mt-4 text-2xl">
+      <p className="mt-4 lg:text-2xl text-xl">
         I am a Full Stack Developer working at {COMPANY}
       </p>
       <div className="flex space-x-4 mt-6">

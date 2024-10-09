@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <div className="px-20">
+      <div className="lg:px-20 px-8">
         <Introduction />
         <SkillTree />
         <Projects />
