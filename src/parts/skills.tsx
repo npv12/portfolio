@@ -1,5 +1,6 @@
 import useGradientArtifacts from "@/components/GradientCreator/gradient";
 import TagSphere from "@/components/TagSphere/TagSphere";
+import Title from "@/components/Title";
 import { COMPANY, NAME } from "@/data/basic";
 import { allSkills } from "@/data/skills";
 
@@ -17,9 +18,7 @@ const SkillTree = () => {
           <TagSphere skills={allSkills} />
         </div>
         <div className="w-1/2 pl-40">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            About Me
-          </h1>
+          <Title title="About Me" />
           <div className="space-y-4 text-lg text-justify">
             <p>Hi, I'm {NAME} (a.k.a. npv12)!</p>
             <p>I am a fullstack developer at {COMPANY}</p>
