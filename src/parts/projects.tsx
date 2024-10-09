@@ -36,7 +36,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
           style={{ width: isMobile ? width * 0.8 : width * 0.55 }}
         />
       </figure>
-      <div className="card-body" style={{ width: isMobile ? width * 0.8: width * 0.4 }}>
+      <div
+        className="card-body"
+        style={{ width: isMobile ? width * 0.8 : width * 0.4 }}
+      >
         <h2 className="card-title">{project.title}</h2>
         <p className="text-sm">
           {project.description.split(" ").slice(0, 50).join(" ")}
@@ -76,7 +79,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
 const Projects = () => {
   const [projectsList, setProjectsList] = useState<Project[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const gradients = useGradientArtifacts({ maxGradients: 10, heightMultiplier: 3 });
+  const gradients = useGradientArtifacts({
+    maxGradients: 10,
+    heightMultiplier: 3,
+  });
 
   useEffect(() => {
     setProjectsList(projects);
@@ -108,8 +114,8 @@ const Projects = () => {
   return (
     <div id="projects" className="my-8">
       <Title title="Projects" />
-        {gradients}
-      <div className="flex flex-row items-center justify-center space-x-4">
+      {gradients}
+      <div className="flex flex-row items-center justify-center space-x-4 mt-4">
         <div className="btn-outline btn-circle" onClick={handlePrevious}>
           <PiCaretCircleLeft size={48} />
         </div>
