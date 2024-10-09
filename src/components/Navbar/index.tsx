@@ -3,22 +3,26 @@ import { themes } from "@/data/themes";
 import { getTheme, setTheme as setGlobalTheme } from "@/utils/cookie";
 import React, { useEffect, useState } from "react";
 import {
-  BiBookContent,
-  BiBrain,
-  BiCodeBlock,
-  BiHome,
-  BiMenu,
-  BiPalette,
-} from "react-icons/bi";
+  PiBrainDuotone,
+  PiCodeBlockDuotone,
+  PiHouseDuotone,
+  PiPaletteDuotone,
+  PiQuotesDuotone,
+  PiTextOutdentDuotone,
+} from "react-icons/pi";
 
 const Navbar = () => {
   const [theme, setTheme] = useState(getTheme());
 
   const navItems = [
-    { name: "Home", section: "intro", icon: <BiHome /> },
-    { name: "Skills", section: "skills", icon: <BiBrain /> },
-    { name: "Projects", section: "projects", icon: <BiCodeBlock /> },
-    { name: "Blogs", section: "blogs", icon: <BiBookContent /> },
+    { name: "Home", section: "intro", icon: <PiHouseDuotone size={18} /> },
+    { name: "Skills", section: "skills", icon: <PiBrainDuotone size={18} /> },
+    {
+      name: "Projects",
+      section: "projects",
+      icon: <PiCodeBlockDuotone size={18} />,
+    },
+    { name: "Blogs", section: "blogs", icon: <PiQuotesDuotone size={18} /> },
   ];
 
   const scrollToSection = (section: string) => {
@@ -44,7 +48,10 @@ const Navbar = () => {
               aria-label="open sidebar"
               className="btn btn-square btn-ghost"
             >
-              <BiMenu className="inline-block w-5 h-5" />
+              <PiTextOutdentDuotone
+                className="inline-block w-5 h-5"
+                size={18}
+              />
             </label>
           </div>
           <div className="mx-2 flex-1 px-2 text-xl font-bold">
@@ -75,7 +82,7 @@ const Navbar = () => {
               role="button"
               className="btn btn-ghost rounded-btn"
             >
-              <BiPalette/>
+              <PiPaletteDuotone size={18} />
               {theme
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

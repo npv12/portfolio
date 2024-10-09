@@ -3,12 +3,12 @@ import useGradientArtifacts from "@/components/GradientCreator/gradient";
 import { COMPANY, NAME } from "@/data/basic";
 import Head from "next/head";
 import {
-  FaDownload,
-  FaEnvelope,
-  FaGithub,
-  FaLinkedinIn,
-  FaTwitter,
-} from "react-icons/fa6";
+  PiDownloadDuotone,
+  PiEnvelopeOpenDuotone,
+  PiGithubLogoDuotone,
+  PiLinkedinLogoDuotone,
+  PiTwitterLogoDuotone,
+} from "react-icons/pi";
 
 export default function Introduction() {
   const gradients = useGradientArtifacts();
@@ -35,7 +35,7 @@ export default function Introduction() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaGithub />
+          <PiGithubLogoDuotone />
         </a>
         <a
           href="https://www.linkedin.com/in/npv12/"
@@ -43,7 +43,7 @@ export default function Introduction() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaLinkedinIn />
+          <PiLinkedinLogoDuotone />
         </a>
         <a
           href="mailto:pranav10121@gmail.com"
@@ -51,7 +51,7 @@ export default function Introduction() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaEnvelope />
+          <PiEnvelopeOpenDuotone />
         </a>
         <a
           href="https://www.x.com/PranavNedungad4/"
@@ -59,11 +59,11 @@ export default function Introduction() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaTwitter />
+          <PiTwitterLogoDuotone />
         </a>
       </div>
-      <button className="btn btn-primary w-48 mt-6">
-        <FaDownload className="mr-2" /> View Resume
+      <button className="btn btn-secondary w-48 mt-6">
+        <PiDownloadDuotone size={24} className="mr-2" /> View Resume
       </button>
     </div>
   );
