@@ -22,6 +22,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
     }
     setWidth(window.innerWidth * 0.8);
     setIsMobile(window.innerWidth < 1024);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.innerWidth]);
 
   return (

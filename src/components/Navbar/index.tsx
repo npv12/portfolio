@@ -12,7 +12,9 @@ import {
 } from "react-icons/pi";
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(getTheme());
+  const [isClient, setIsClient] = useState(false);
+
+  const [theme, setTheme] = useState(getTheme(isClient));
 
   const navItems = [
     { name: "Home", section: "intro", icon: <PiHouseDuotone size={18} /> },
@@ -33,8 +35,12 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    setGlobalTheme(theme);
-  }, [theme]);
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    setTheme(getTheme(isClient));
+  }, [isClient]);
 
   return (
     <div className="drawer sticky top-0">
@@ -95,7 +101,12 @@ const Navbar = () => {
             >
               {themes.map((t) => (
                 <li key={t}>
-                  <a onClick={() => setTheme(t)}>
+                  <a
+                    onClick={() => {
+                      setTheme(t);
+                      setGlobalTheme(t);
+                    }}
+                  >
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </a>
                 </li>

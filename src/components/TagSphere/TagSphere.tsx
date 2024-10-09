@@ -31,6 +31,7 @@ export default function TagSphere(props: any) {
     setItems(() =>
       skills.map((skill, index) => {
         const skillImg = (
+          // @ts-ignore
           <img
             width={50}
             height={50}
@@ -47,6 +48,7 @@ export default function TagSphere(props: any) {
         );
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skills]);
 
   const containerRef = useRef(null);
@@ -140,11 +142,13 @@ export default function TagSphere(props: any) {
   useEffect(() => {
     init();
     setItems((items: any) => [...items]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const animationFrame = requestAnimationFrame(next);
     return () => cancelAnimationFrame(animationFrame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mouseX, mouseY, lessSpeed, active, items, props.radius]);
 
   return (

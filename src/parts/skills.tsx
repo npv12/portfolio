@@ -17,13 +17,13 @@ const SkillTree = () => {
         <div className="w-full lg:w-2/3 lg:space-y-8 lg:text-lg lg:text-justify">
           <Title title="About Me" />
           <div className="space-y-4 text-sm md:text-base lg:text-lg">
-            <p>Hi, I'm {NAME} (a.k.a. npv12)!</p>
+            <p>Hi, I&lsquo;m {NAME} (a.k.a. npv12)!</p>
             <p>I am a fullstack developer at {COMPANY}</p>
             <p>
               My passion lies in full-stack development, where I excel at
               creating seamless web experiences. I am also a dedicated advocate
               of open-source development, enjoying the process of building
-              high-quality web applications that positively impact users' lives.
+              high-quality web applications that positively impact users&lsquo; lives.
             </p>
             <p>
               I spend my free time learning new technologies and continuously

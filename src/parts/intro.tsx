@@ -20,7 +20,7 @@ export default function Introduction() {
         <title>Personal Introduction</title>
       </Head>
       <div className="mb-4">
-        <h1 className="text-6xl font-bold">Hello! I'm</h1>
+        <h1 className="text-6xl font-bold">Hello! I&lsquo;m</h1>
         <h2 className="text-8xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
           {NAME}
         </h2>
