@@ -36,8 +36,8 @@ const GlowingCircles: FC<GlowingCirclesProps> = ({
         margin: "auto",
       };
     return {
-        left: `${position}%`
-    }
+      left: `${position}%`,
+    };
   };
   return (
     <div className="absolute inset-0 z-[-1]">

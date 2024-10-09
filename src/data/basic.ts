@@ -1,2 +1,2 @@
-export const NAME = "Pranav Nedungadi"
-export const COMPANY = "Blaze AI (YC W22)"
+export const NAME = "Pranav Nedungadi";
+export const COMPANY = "Blaze AI (YC W22)";

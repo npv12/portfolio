@@ -51,9 +51,12 @@ function useGradientArtifacts({
       const conic = Math.random() < 0.5;
       const small = Math.random() < 0.5;
 
-      top = Math.min(top, (window.innerHeight / window.innerWidth) * window.innerWidth);
+      top = Math.min(
+        top,
+        (window.innerHeight / window.innerWidth) * window.innerWidth
+      );
       // multiple the innerheight by heightMultiplier - 1 and add it to the top;
-      top = (window.innerHeight * (heightMultiplier - 1)) + top;
+      top = window.innerHeight * (heightMultiplier - 1) + top;
       left = Math.min(left, 100);
 
       gradients.push({

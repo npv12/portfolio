@@ -10,9 +10,9 @@ export default function Home() {
     <div>
       <Navbar />
       <div className="px-20">
-      <Introduction />
-      <SkillTree />
-      <Projects />
+        <Introduction />
+        <SkillTree />
+        <Projects />
       </div>
     </div>
   );
