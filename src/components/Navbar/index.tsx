@@ -31,6 +31,7 @@ const Navbar = () => {
     const element = document.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("navbar-drawer")?.click();
     }
   };
 
