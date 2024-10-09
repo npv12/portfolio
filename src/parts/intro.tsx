@@ -62,8 +62,9 @@ export default function Introduction() {
           <PiTwitterLogoDuotone />
         </a>
       </div>
-      <button className="btn btn-secondary w-48 mt-6">
-        <PiDownloadDuotone size={24} className="mr-2" /> View Resume
+      <button className="btn btn-secondary text-secondary-content w-48 mt-6">
+        <PiDownloadDuotone size={24} className="mr-2" />
+        <p>View Resume</p>
       </button>
     </div>
   );
