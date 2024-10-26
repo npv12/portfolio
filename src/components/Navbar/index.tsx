@@ -41,6 +41,8 @@ const Navbar = () => {
 
   useEffect(() => {
     setTheme(getTheme(isClient));
+    if (!isClient) return;
+    setGlobalTheme(getTheme(isClient));
   }, [isClient]);
 
   return (
