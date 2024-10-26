@@ -15,13 +15,15 @@ export default function Introduction() {
   return (
     <div id="intro" className="min-h-screen flex flex-col justify-center">
       {gradients}
-      <GlowingCircles maxRadius={712} position={30} />
+          <div className="hidden lg:block">
+            <GlowingCircles maxRadius={712} position={30} />
+          </div>
       <Head>
         <title>Personal Introduction</title>
       </Head>
       <div className="mb-4">
         <h1 className="lg:text-6xl text-xl font-bold">Hello! I&lsquo;m</h1>
-        <h2 className=" lg:text-8xl text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+        <h2 className=" lg:text-8xl md:text-6xl text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
           {NAME}
         </h2>
       </div>
