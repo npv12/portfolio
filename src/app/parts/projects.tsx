@@ -54,7 +54,7 @@ const Projects = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const gradients = useGradientArtifacts({
     maxGradients: 10,
-    heightMultiplier: 3,
+    heightMultiplier: 4,
   });
 
   const projectsPerPage = 6;
