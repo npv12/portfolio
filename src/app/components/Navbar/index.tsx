@@ -5,7 +5,9 @@ import React, { useEffect, useState } from "react";
 import {
   PiBrainDuotone,
   PiCodeBlockDuotone,
+  PiEnvelopeDuotone,
   PiHouseDuotone,
+  PiLightbulbDuotone,
   PiPaletteDuotone,
   PiQuotesDuotone,
   PiTextOutdentDuotone,
@@ -23,6 +25,16 @@ const Navbar = () => {
       name: "Projects",
       section: "projects",
       icon: <PiCodeBlockDuotone size={18} />,
+    },
+    {
+      name: "Experience",
+      section: "experience",
+      icon: <PiLightbulbDuotone size={18} />,
+    },
+    {
+      name: "Contact",
+      section: "contact",
+      icon: <PiEnvelopeDuotone size={18} />,
     },
     { name: "Blogs", section: "blogs", icon: <PiQuotesDuotone size={18} /> },
   ];
@@ -123,12 +135,13 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {/* Drawer */}
       <div className="drawer-side">
         <label
           htmlFor="navbar-drawer"
           aria-label="close sidebar"
           className="drawer-overlay"
-        ></label>
+        />
         <ul className="menu bg-base-200 min-h-full w-80 p-4">
           {navItems.map((item) => (
             <li key={item.name}>

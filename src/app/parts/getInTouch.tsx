@@ -9,7 +9,7 @@ import { EMAIL, LINKEDIN, TWITTER } from "../data/basic";
 
 const GetInTouch: React.FC = () => {
   return (
-    <div className="gap-8 p-6">
+    <div className="gap-8 p-6" id="contact">
       <Title title="Dive into my chronicles" />
       <div className="flex flex-col md:flex-row gap-8 mt-6">
         {/* Left Side - Blog Section */}
