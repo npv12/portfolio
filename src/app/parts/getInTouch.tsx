@@ -14,7 +14,7 @@ const GetInTouch: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-8 mt-6">
         {/* Left Side - Blog Section */}
         <div className="w-full md:w-1/2">
-          <div className="bg-base-200 rounded-lg shadow-md p-6 h-64">
+          <div className="bg-base-200 rounded-lg shadow-md p-6 h-[400px] sm:h-[300px] md:h-[350px] lg:h-[250px]">
             <h2 className="text-2xl font-bold mb-4">Explore My Blogs</h2>
             <div className="space-y-4">
               <p className="text-base-content mb-4">
@@ -32,7 +32,7 @@ const GetInTouch: React.FC = () => {
 
         {/* Right Side - Contact Card */}
         <div className="w-full md:w-1/2">
-          <div className="bg-base-200 rounded-lg shadow-md p-6 h-64">
+          <div className="bg-base-200 rounded-lg shadow-md p-6 h-[400px] sm:h-[300px] md:h-[350px] lg:h-[250px]">
             <h2 className="text-2xl font-bold mb-4">Let's Connect</h2>
             <p className="text-base-content mb-4">
               Feel free to reach out for collaborations, opportunities, or just
