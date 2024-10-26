@@ -14,9 +14,9 @@ const ProjectCard = ({ project }: { project: Project }) => {
     <div className="card bg-neutral shadow-md text-neutral-content h-[400px] z-[-1]">
       <div className="card-body">
         <h2 className="card-title text-xl md:text-2xl lg:text-3xl">{project.title}</h2>
-        <p className="text-sm mt-4">
-          {project.description.split(" ").slice(0, 50).join(" ")}
-          ...
+        <p className="text-sm mt-4 text-pretty text-justify">
+          {project.description.split(" ").slice(0, 75).join(" ")}
+          {project.description.split(" ").length > 75 && "..."}
         </p>
         <div className="flex flex-wrap gap-2 mt-6">
           {project.githubLink && (

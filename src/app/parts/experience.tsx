@@ -14,7 +14,7 @@ const DesktopExperience: FC = () => (
             index % 2 === 0 ? "start" : "end"
           } timeline-box`}
         >
-          <div className="p-4 w-[500px]">
+          <div className="p-4 w-96">
             <h2 className="text-xl font-bold">{exp.company}</h2>
             <div className="badge badge-ghost my-2 badge-md p-3">
               {exp.position}
@@ -96,13 +96,16 @@ const Experience: FC = () => {
     heightMultiplier: 3,
   });
 
-  const isMobile = window.innerWidth <= 768;
-
   return (
     <div className="px-4 py-16" id="experience">
       <Title title="Experience" />
       {gradients}
-      {isMobile ? <MobileExperience /> : <DesktopExperience />}
+          <div className="hidden md:block lg:block">
+            <DesktopExperience />
+          </div>
+          <div className="block md:hidden lg:hidden">
+            <MobileExperience />
+          </div>
     </div>
   );
 };
