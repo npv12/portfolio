@@ -1,6 +1,6 @@
-import { NAME } from "@/data/basic";
-import { themes } from "@/data/themes";
-import { getTheme, setTheme as setGlobalTheme } from "@/utils/cookie";
+import { NAME } from "@/app/data/basic";
+import { themes } from "@/app/data/themes";
+import { getTheme, setTheme as setGlobalTheme } from "@/app/utils/cookie";
 import React, { useEffect, useState } from "react";
 import {
   PiBrainDuotone,

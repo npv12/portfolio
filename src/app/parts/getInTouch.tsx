@@ -1,10 +1,11 @@
-import Title from "@/components/Title";
+import Title from "@/app/components/Title";
 import React from "react";
 import {
   PiEnvelopeDuotone,
   PiLinkedinLogoDuotone,
   PiTwitterLogoDuotone,
 } from "react-icons/pi";
+import { EMAIL, LINKEDIN, TWITTER } from "../data/basic";
 
 const GetInTouch: React.FC = () => {
   return (
@@ -13,7 +14,7 @@ const GetInTouch: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-8 mt-6">
         {/* Left Side - Blog Section */}
         <div className="w-full md:w-1/2">
-          <div className="bg-base-100 rounded-lg shadow-md p-6 h-64">
+          <div className="bg-base-200 rounded-lg shadow-md p-6 h-64">
             <h2 className="text-2xl font-bold mb-4">Explore My Blogs</h2>
             <div className="space-y-4">
               <p className="text-base-content mb-4">
@@ -31,34 +32,34 @@ const GetInTouch: React.FC = () => {
 
         {/* Right Side - Contact Card */}
         <div className="w-full md:w-1/2">
-          <div className="bg-base-100 rounded-lg shadow-md p-6 h-64">
+          <div className="bg-base-200 rounded-lg shadow-md p-6 h-64">
             <h2 className="text-2xl font-bold mb-4">Let's Connect</h2>
             <p className="text-base-content mb-4">
               Feel free to reach out for collaborations, opportunities, or just
               to say hello!
             </p>
-            <div className="space-y-4 space-x-10">
+            <div className="space-y-4 space-x-10 mt-14">
               <a
-                href="mailto:pranav10121@gmail.com"
-                className="p-3 bg-base-200 rounded-full hover:bg-primary/20 transition-colors tooltip"
-                data-tip="pranav10121@gmail.com"
+                href={`mailto:${EMAIL}`}
+                className="p-3 bg-base-300 rounded-full hover:bg-primary/20 transition-colors tooltip"
+                data-tip={EMAIL}
               >
                 <PiEnvelopeDuotone className="text-2xl" />
               </a>
               <a
-                href="https://linkedin.com/in/yourprofile"
+                href={LINKEDIN}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-base-200 rounded-full hover:bg-primary/20 transition-colors tooltip"
+                className="p-3 bg-base-300 rounded-full hover:bg-primary/20 transition-colors tooltip"
                 data-tip="LinkedIn Profile"
               >
                 <PiLinkedinLogoDuotone className="text-2xl" />
               </a>
               <a
-                href="https://twitter.com/yourhandle"
+                href={TWITTER}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-base-200 rounded-full hover:bg-primary/20 transition-colors tooltip"
+                className="p-3 bg-base-300 rounded-full hover:bg-primary/20 transition-colors tooltip"
                 data-tip="Twitter Profile"
               >
                 <PiTwitterLogoDuotone className="text-2xl" />

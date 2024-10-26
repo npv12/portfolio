@@ -1,6 +1,6 @@
-import GlowingCircles from "@/components/GlowingCircles/circles";
-import useGradientArtifacts from "@/components/GradientCreator/gradient";
-import { COMPANY, NAME } from "@/data/basic";
+import GlowingCircles from "@/app/components/GlowingCircles/circles";
+import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
+import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, TWITTER } from "@/app/data/basic";
 import Head from "next/head";
 import {
   PiDownloadDuotone,
@@ -32,7 +32,7 @@ export default function Introduction() {
       </p>
       <div className="flex space-x-4 mt-6">
         <a
-          href="https://github.com/npv12"
+          href={GITHUB}
           className="text-2xl"
           target="_blank"
           rel="noopener noreferrer"
@@ -40,7 +40,7 @@ export default function Introduction() {
           <PiGithubLogoDuotone />
         </a>
         <a
-          href="https://www.linkedin.com/in/npv12/"
+          href={LINKEDIN}
           className="text-2xl"
           target="_blank"
           rel="noopener noreferrer"
@@ -48,7 +48,7 @@ export default function Introduction() {
           <PiLinkedinLogoDuotone />
         </a>
         <a
-          href="mailto:pranav10121@gmail.com"
+          href={`mailto:${EMAIL}`}
           className="text-2xl"
           target="_blank"
           rel="noopener noreferrer"
@@ -56,7 +56,7 @@ export default function Introduction() {
           <PiEnvelopeOpenDuotone />
         </a>
         <a
-          href="https://www.x.com/PranavNedungad4/"
+          href={TWITTER}
           className="text-2xl"
           target="_blank"
           rel="noopener noreferrer"

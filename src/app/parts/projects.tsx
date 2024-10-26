@@ -1,7 +1,7 @@
-import useGradientArtifacts from "@/components/GradientCreator/gradient";
-import Title from "@/components/Title";
-import projects from "@/data/projects";
-import { Project } from "@/types/projects";
+import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
+import Title from "@/app/components/Title";
+import projects from "@/app/data/projects";
+import { Project } from "@/app/types/projects";
 import { useEffect, useState } from "react";
 import {
   PiGithubLogoDuotone,
@@ -58,24 +58,20 @@ const Projects = () => {
   });
 
   const projectsPerPage = 6;
-  const totalPages = Math.ceil(projectsList.length / projectsPerPage);
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
 
   useEffect(() => {
-    setProjectsList(projects);
-  }, []);
-
-  const getCurrentPageProjects = () => {
     const start = currentPage * projectsPerPage;
-    return projectsList.slice(start, start + projectsPerPage);
-  };
+    setProjectsList(projects.slice(start, start + projectsPerPage));
+  }, [projects, currentPage]);
 
   return (
     <div id="projects" className="my-8">
       <Title title="Projects" />
       {gradients}
-      <div className="container mx-auto px-4 mt-8">
+      <div className="container mx-auto mt-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {getCurrentPageProjects().map((project) => (
+          {projectsList.map((project) => (
             <div key={project.title}>
               <ProjectCard project={project} />
             </div>
