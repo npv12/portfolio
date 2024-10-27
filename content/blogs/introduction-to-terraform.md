@@ -17,14 +17,15 @@ Terraform enables you to use HashiCorp Configuration Language (HCL) or JSON to d
 ## Key Concepts
 
 ### 1. Providers
-
+```
 provider "aws" {
   region = "us-west-2"
 }
+```
 
 
 ### 2. Resources
-
+```
 resource "aws_instance" "example" {
   ami           = "ami-0c55b159cbfafe1f0"
   instance_type = "t2.micro"
@@ -33,33 +34,37 @@ resource "aws_instance" "example" {
     Name = "example-instance"
   }
 }
+```
 
 
 ### 3. Variables
-
+```
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
   default     = "t2.micro"
 }
-
+```
 
 ## Basic Workflow
 
 1. **Initialize** your Terraform working directory:
 
+```
 terraform init
-
+```
 
 2. **Plan** your changes:
 
+```
 terraform plan
-
+```
 
 3. **Apply** the changes:
 
+```
 terraform apply
-
+```
 
 ## Best Practices
 
