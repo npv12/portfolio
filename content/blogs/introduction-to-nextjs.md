@@ -61,6 +61,6 @@ Next.js provides a robust foundation for building modern web applications. Its f
 
 ### Further Reading
 
-- Official Next.js Documentation
-- React Documentation
-- Web Performance Optimization Guides
+- [Official Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Web Performance Optimization Guides](https://web.dev/learn/performance)

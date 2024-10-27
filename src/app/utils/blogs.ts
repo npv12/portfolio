@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
+import MarkdownIt from "markdown-it";
 
 import { BlogPost } from "../types/blogs";
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
+  const md = new MarkdownIt();
   const postsDirectory = path.join(process.cwd(), "content/blogs");
   const filenames = fs
     .readdirSync(postsDirectory)
@@ -13,21 +15,37 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     const fullPath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(fullPath, "utf8");
 
-    // Extract frontmatter from markdown content
-    const frontmatterMatch = fileContents.match(/^---\n([\s\S]*?)\n---/);
-    const frontmatter = frontmatterMatch
-      ? frontmatterMatch[1].split("\n").reduce((acc: any, line) => {
-          const [key, value] = line.split(": ");
-          if (key && value) acc[key.trim()] = value.trim();
-          return acc;
-        }, {})
-      : {};
+    const tokens = md.parse(fileContents, {});
+    let frontmatter: { title?: string; date?: string } = {};
+    if (tokens[1]?.type === "heading_open") {
+      try {
+        frontmatter = JSON.parse(`{${tokens[2].content}}`);
+      } catch (e) {
+        // If JSON parsing fails, try YAML-style parsing
+        frontmatter = tokens[2].content
+          .split("\n")
+          .reduce((acc: Record<string, string>, line: string) => {
+            const [key, ...valueArr] = line.split(":");
+            if (key && valueArr.length) {
+              const value = valueArr
+                .join(":")
+                .trim()
+                .replace(/^"(.*)"$/, "$1");
+              acc[key.trim()] = value;
+            }
+            return acc;
+          }, {});
+      }
+    }
 
-    const wordCount = fileContents.trim().split(/\s+/).length;
+    // Calculate reading time
     const wordsPerMinute = 200;
-    const minutes = Math.ceil(wordCount / wordsPerMinute);
-    const readingTimeText =
-      minutes === 1 ? "1 min read" : `${minutes} min read`;
+    const content = md.parse(fileContents, {})
+      .filter((token: { type: string; }) => token.type === "inline")
+      .map((token: { content: string }) => token.content)      .join(" ");
+    const wordCount = content.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / wordsPerMinute);
+    const readingTimeText = `${readingTime} min read`;
 
     return {
       title: frontmatter.title || filename.replace(".md", ""),
@@ -36,6 +54,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       readingTime: readingTimeText,
     };
   });
+
   return posts.sort(
     (a: BlogPost, b: BlogPost) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
