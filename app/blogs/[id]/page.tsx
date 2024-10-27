@@ -1,5 +1,5 @@
-import Navbar from "@/app/components/Navbar";
-import { calculateReadingTime } from "@/app/utils/blogs";
+import Navbar from "../../components/Navbar";
+import { calculateReadingTime } from "../../utils/blogs";
 import fs from "fs";
 import matter from "gray-matter";
 import md from "markdown-it";

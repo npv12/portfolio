@@ -1,9 +1,9 @@
 "use client";
 
-import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
-import Title from "@/app/components/Title";
-import projects from "@/app/data/projects";
-import { Project } from "@/app/types/projects";
+import useGradientArtifacts from "../components/GradientCreator/gradient";
+import Title from "../components/Title";
+import projects from "../data/projects";
+import { Project } from "../types/projects";
 import { useEffect, useState } from "react";
 
 import ProjectCard from "../components/ProjectCard/ProjectCard";

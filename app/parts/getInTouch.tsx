@@ -1,4 +1,4 @@
-import Title from "@/app/components/Title";
+import Title from "../components/Title";
 import React from "react";
 import {
   PiEnvelopeDuotone,

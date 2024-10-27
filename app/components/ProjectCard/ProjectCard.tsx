@@ -1,4 +1,4 @@
-import { Project } from "@/app/types/projects";
+import { Project } from "../../types/projects";
 import {
   PiGithubLogoDuotone,
   PiLinkDuotone,

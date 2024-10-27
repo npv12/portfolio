@@ -1,7 +1,7 @@
 "use client";
 
-import GlowingCircles from "@/app/components/GlowingCircles/circles";
-import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
+import GlowingCircles from "../components/GlowingCircles/circles";
+import useGradientArtifacts from "../components/GradientCreator/gradient";
 import {
   COMPANY,
   EMAIL,
@@ -9,7 +9,7 @@ import {
   LINKEDIN,
   NAME,
   TWITTER,
-} from "@/app/data/basic";
+} from "../data/basic";
 import Head from "next/head";
 import {
   PiDownloadDuotone,

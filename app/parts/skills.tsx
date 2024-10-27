@@ -1,10 +1,10 @@
 "use client";
 
-import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
-import TagSphere from "@/app/components/TagSphere/TagSphere";
-import Title from "@/app/components/Title";
-import { COMPANY, NAME } from "@/app/data/basic";
-import { allSkills } from "@/app/data/skills";
+import useGradientArtifacts from "../components/GradientCreator/gradient";
+import TagSphere from "../components/TagSphere/TagSphere";
+import Title from "../components/Title";
+import { COMPANY, NAME } from "../data/basic";
+import { allSkills } from "../data/skills";
 
 const SkillTree = () => {
   const gradients = useGradientArtifacts({
