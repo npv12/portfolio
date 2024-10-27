@@ -25,21 +25,18 @@ const projects = [
     title: "Quests",
     description:
       "Developed the Quests feature for a Web3 platform, enabling the creation of interactive quests that reward users for various actions. Users can earn rewards by liking tweets, following users, retweeting, joining Discord or Telegram groups, and more. This feature fosters engagement and community involvement by gamifying social interactions and incentivizing participation. Quests enhance user experience by seamlessly integrating with popular social media platforms and providing tangible rewards for user engagement.",
-    link: "https://github.com/npv12/npv12.github.io",
     tags: ["Quests", "MicroServices", "Lambda", "Stepfunction"],
   },
   {
     title: "Audience Builder",
     description:
       "Developed the Audience Builder, a comprehensive tool that compiles lists of people on Twitter along with additional data, such as direct messaging availability, wallet addresses, and users' net worth based on wallet data. This feature allows for strategic engagement and personalized interactions. Additionally, I played a key role in scaling the tool's user base from 500k to 100M, significantly enhancing its reach and impact. The Audience Builder is a powerful asset for targeted marketing, leveraging rich data insights to optimize connection strategies.",
-    link: "https://github.com/npv12/npv12.github.io",
     tags: ["Python", "Web3", "Scripting"],
   },
   {
     title: "WeAreGodsOf",
     description:
       "Developed wearegodsoff, an internal tool designed for efficient service management and admin operations. This tool retrieves logs from various services, grants administrative accesses like promoting users to admin levels, adding credits, and downloading invoices. It also manages user status, including banning and unbanning users. wearegodsoff streamlines admin tasks, ensuring quick and reliable management of user interactions and service logs, enhancing overall operational efficiency.",
-    link: "https://github.com/npv12/npv12.github.io",
     tags: ["Next.js", "React", "TailwindCSS"],
   },
 ];
