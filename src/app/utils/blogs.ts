@@ -1,6 +1,6 @@
 import fs from "fs";
-import path from "path";
 import MarkdownIt from "markdown-it";
+import path from "path";
 
 import { BlogPost } from "../types/blogs";
 
@@ -40,9 +40,11 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 
     // Calculate reading time
     const wordsPerMinute = 200;
-    const content = md.parse(fileContents, {})
-      .filter((token: { type: string; }) => token.type === "inline")
-      .map((token: { content: string }) => token.content)      .join(" ");
+    const content = md
+      .parse(fileContents, {})
+      .filter((token: { type: string }) => token.type === "inline")
+      .map((token: { content: string }) => token.content)
+      .join(" ");
     const wordCount = content.split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / wordsPerMinute);
     const readingTimeText = `${readingTime} min read`;
