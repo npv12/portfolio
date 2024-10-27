@@ -1,6 +1,6 @@
 import fs from "fs";
-import MarkdownIt from "markdown-it";
 import path from "path";
+import matter from 'gray-matter';
 
 import { BlogPost } from "../types/blogs";
 
@@ -13,7 +13,6 @@ export const calculateReadingTime = (text: string): string => {
 };
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const md = new MarkdownIt();
   const postsDirectory = path.join(process.cwd(), "content/blogs");
   const filenames = fs
     .readdirSync(postsDirectory)
@@ -22,36 +21,14 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   const posts = filenames.map((filename) => {
     const fullPath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(fullPath, "utf8");
-
-    const tokens = md.parse(fileContents, {});
-    let frontmatter: { title?: string; date?: string } = {};
-    if (tokens[1]?.type === "heading_open") {
-      try {
-        frontmatter = JSON.parse(`{${tokens[2].content}}`);
-      } catch (e) {
-        // If JSON parsing fails, try YAML-style parsing
-        frontmatter = tokens[2].content
-          .split("\n")
-          .reduce((acc: Record<string, string>, line: string) => {
-            const [key, ...valueArr] = line.split(":");
-            if (key && valueArr.length) {
-              const value = valueArr
-                .join(":")
-                .trim()
-                .replace(/^"(.*)"$/, "$1");
-              acc[key.trim()] = value;
-            }
-            return acc;
-          }, {});
-      }
-    }
-
-    // Calculate reading time
-    const readingTimeText = calculateReadingTime(fileContents);
+    
+    const { data, content } = matter(fileContents);
+    
+    const readingTimeText = calculateReadingTime(content);
 
     return {
-      title: frontmatter.title || filename.replace(".md", ""),
-      date: frontmatter.date || new Date().toISOString(),
+      title: data.title || filename.replace(".md", ""),
+      date: data.date || new Date().toISOString(),
       slug: filename.replace(".md", ""),
       readingTime: readingTimeText,
     };
