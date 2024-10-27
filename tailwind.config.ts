@@ -48,4 +48,19 @@ module.exports = {
       "joker",
     ],
   },
+  theme: {
+    extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            h1: {
+              backgroundImage: 'linear-gradient(to right, oklch(var(--p)), oklch(var(--a)))',
+              backgroundClip: 'text',
+              color: 'transparent',
+            },
+          },
+        },
+      },
+    },
+  },
 };
