@@ -4,11 +4,7 @@ import fs from "fs";
 import matter from "gray-matter";
 import md from "markdown-it";
 
-const BlogContent = ({
-  content,
-}: {
-  content: string;
-}) => {
+const BlogContent = ({ content }: { content: string }) => {
   return (
     <div
       className="prose mx-auto lg:prose-lg"
@@ -59,7 +55,7 @@ const BlogCard = ({
   );
 };
 
-export const BlogParts = (props: { id: string }) => {
+const BlogParts = (props: { id: string }) => {
   const { id } = props;
   try {
     const fileName = fs.readFileSync(`content/blogs/${id}.md`, "utf-8");
@@ -68,7 +64,7 @@ export const BlogParts = (props: { id: string }) => {
     return (
       <div className="mt-2 p-4 flex gap-8">
         <div className="flex-grow">
-          <BlogContent content={content}/>
+          <BlogContent content={content} />
         </div>
         <BlogCard
           title={data.title}
@@ -83,6 +79,7 @@ export const BlogParts = (props: { id: string }) => {
     return <div>No blog found</div>;
   }
 };
+
 export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div>
