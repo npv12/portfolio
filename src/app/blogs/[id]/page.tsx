@@ -3,6 +3,7 @@ import { calculateReadingTime } from "@/app/utils/blogs";
 import fs from "fs";
 import matter from "gray-matter";
 import md from "markdown-it";
+import { useRouter } from "next/router";
 
 const BlogContent = ({ content }: { content: string }) => {
   return (
@@ -80,11 +81,12 @@ const BlogParts = (props: { id: string }) => {
   }
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page() {
+  const router = useRouter();
   return (
     <div>
       <Navbar />
-      <BlogParts id={params.id} />
+      <BlogParts id={router.query.id as string} />
     </div>
   );
 }
