@@ -1,3 +1,5 @@
+'use client'
+
 import { createRef, useEffect, useRef, useState } from "react";
 
 import { createItem, fetchIconFromText, updateItemPosition } from "./helper";

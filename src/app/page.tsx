@@ -1,5 +1,3 @@
-"use client";
-
 import Navbar from "@/app/components/Navbar";
 import GetInTouch from "@/app/parts/getInTouch";
 import Introduction from "@/app/parts/intro";

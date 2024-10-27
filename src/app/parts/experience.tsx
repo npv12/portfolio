@@ -91,21 +91,15 @@ const MobileExperience: FC = () => (
 );
 
 const Experience: FC = () => {
-  const gradients = useGradientArtifacts({
-    maxGradients: 10,
-    heightMultiplier: 3,
-  });
-
   return (
     <div className="px-4 py-16" id="experience">
       <Title title="Experience" />
-      {gradients}
-          <div className="hidden md:block lg:block">
-            <DesktopExperience />
-          </div>
-          <div className="block md:hidden lg:hidden">
-            <MobileExperience />
-          </div>
+      <div className="hidden md:block lg:block">
+        <DesktopExperience />
+      </div>
+      <div className="block md:hidden lg:hidden">
+        <MobileExperience />
+      </div>
     </div>
   );
 };

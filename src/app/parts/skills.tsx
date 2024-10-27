@@ -1,3 +1,5 @@
+"use client";
+
 import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
 import TagSphere from "@/app/components/TagSphere/TagSphere";
 import Title from "@/app/components/Title";

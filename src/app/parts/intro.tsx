@@ -1,3 +1,5 @@
+"use client";
+
 import GlowingCircles from "@/app/components/GlowingCircles/circles";
 import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
 import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, TWITTER } from "@/app/data/basic";

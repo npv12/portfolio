@@ -1,6 +1,9 @@
+"use client";
+
 import { NAME } from "@/app/data/basic";
 import { themes } from "@/app/data/themes";
 import { getTheme, setTheme as setGlobalTheme } from "@/app/utils/cookie";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
   PiBrainDuotone,
@@ -14,6 +17,7 @@ import {
 } from "react-icons/pi";
 
 const Navbar = () => {
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   const [theme, setTheme] = useState(getTheme(isClient));
@@ -49,6 +53,16 @@ const Navbar = () => {
       if (drawer && drawer.checked) {
         drawer.click();
       }
+    }
+  };
+
+  const handleNavbarNavigation = (section: string) => {
+    if (section === "blogs") {
+      router.push("/blogs");
+    } else if (window.location.pathname !== "/") {
+      router.push("/");
+    } else {
+      scrollToSection(section);
     }
   };
 
@@ -90,7 +104,7 @@ const Navbar = () => {
                 <li key={item.name}>
                   <a
                     key={item.name}
-                    onClick={() => scrollToSection(item.section)}
+                    onClick={() => handleNavbarNavigation(item.section)}
                     className="font-bold normal-case flex items-center"
                   >
                     {item.icon}
