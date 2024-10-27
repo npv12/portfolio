@@ -54,9 +54,10 @@ module.exports = {
         DEFAULT: {
           css: {
             h1: {
-              backgroundImage: 'linear-gradient(to right, oklch(var(--p)), oklch(var(--a)))',
-              backgroundClip: 'text',
-              color: 'transparent',
+              backgroundImage:
+                "linear-gradient(to right, oklch(var(--p)), oklch(var(--a)))",
+              backgroundClip: "text",
+              color: "transparent",
             },
           },
         },
