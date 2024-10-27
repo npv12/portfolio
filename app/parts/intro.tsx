@@ -69,7 +69,7 @@ export default function Introduction() {
       </div>
       <button className="btn btn-secondary text-secondary-content w-48 mt-6">
         <PiDownloadDuotone size={24} className="mr-2" />
-        <p>View Resume</p>
+        <a href="/resume.pdf" download>View Resume</a>
       </button>
     </div>
   );

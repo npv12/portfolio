@@ -13,7 +13,7 @@ export const calculateReadingTime = (text: string): string => {
 };
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const postsDirectory = path.join(process.cwd(), "content/blogs");
+  const postsDirectory = path.join(process.cwd(), "public/blogs");
   const filenames = fs
     .readdirSync(postsDirectory)
     .filter((file) => file.endsWith(".md"));
@@ -43,7 +43,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogContent(
   slug: string
 ): Promise<{ content: string; frontmatter: FrontMatter }> {
-  const fullPath = path.join(process.cwd(), "content/blogs", `${slug}.md`);
+  const fullPath = path.join(process.cwd(), "public/blogs", `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
 
   const { data, content } = matter(fileContents);
