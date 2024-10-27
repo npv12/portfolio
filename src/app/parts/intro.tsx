@@ -2,7 +2,14 @@
 
 import GlowingCircles from "@/app/components/GlowingCircles/circles";
 import useGradientArtifacts from "@/app/components/GradientCreator/gradient";
-import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, TWITTER } from "@/app/data/basic";
+import {
+  COMPANY,
+  EMAIL,
+  GITHUB,
+  LINKEDIN,
+  NAME,
+  TWITTER,
+} from "@/app/data/basic";
 import Head from "next/head";
 import {
   PiDownloadDuotone,
@@ -17,9 +24,9 @@ export default function Introduction() {
   return (
     <div id="intro" className="min-h-screen flex flex-col justify-center">
       {gradients}
-          <div className="hidden lg:block">
-            <GlowingCircles maxRadius={712} position={30} />
-          </div>
+      <div className="hidden lg:block">
+        <GlowingCircles maxRadius={712} position={30} />
+      </div>
       <Head>
         <title>Personal Introduction</title>
       </Head>

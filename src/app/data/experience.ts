@@ -6,8 +6,7 @@ const Experiences: Experience[] = [
     position: "Software Developer 1",
     startDate: "Nov 2024",
     endDate: "Present",
-    description:
-      "Lets see what this beholds",
+    description: "Lets see what this beholds",
     techStack: ["Go", "Java", "CI/CD"],
   },
   {

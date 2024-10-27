@@ -5,6 +5,7 @@ import {
   PiLinkedinLogoDuotone,
   PiTwitterLogoDuotone,
 } from "react-icons/pi";
+
 import { EMAIL, LINKEDIN, TWITTER } from "../data/basic";
 
 const GetInTouch: React.FC = () => {

@@ -3,6 +3,7 @@ import GetInTouch from "@/app/parts/getInTouch";
 import Introduction from "@/app/parts/intro";
 import Projects from "@/app/parts/projects";
 import SkillTree from "@/app/parts/skills";
+
 import Experience from "./parts/experience";
 
 export default function Home() {

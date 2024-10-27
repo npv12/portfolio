@@ -5,8 +5,8 @@ const Title = ({ title }: { title: string }) => {
         {title}
       </h1>
       <div className="h-[2px] w-64 bg-neutral-500"></div>
-    </div>  
-    );
+    </div>
+  );
 };
 
 export default Title;

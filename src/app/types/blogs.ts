@@ -6,7 +6,7 @@ export type BlogPost = {
 };
 
 export type BlogConfig = {
-    title: string;
-    date: string;
-    filePath: string;
-}
+  title: string;
+  date: string;
+  filePath: string;
+};
