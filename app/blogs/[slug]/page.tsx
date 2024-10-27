@@ -1,15 +1,14 @@
+import { NextjsParams } from "@/app/types/blogs";
+import { marked } from "marked";
+
 import Navbar from "../../components/Navbar";
-import { calculateReadingTime } from "../../utils/blogs";
-import fs from "fs";
-import matter from "gray-matter";
-import md from "markdown-it";
-import { useRouter } from "next/router";
+import { calculateReadingTime, getBlogContent } from "../../utils/blogs";
 
 const BlogContent = ({ content }: { content: string }) => {
   return (
     <div
       className="prose mx-auto lg:prose-lg"
-      dangerouslySetInnerHTML={{ __html: md().render(content) }}
+      dangerouslySetInnerHTML={{ __html: marked.parse(content) }}
     />
   );
 };
@@ -56,11 +55,10 @@ const BlogCard = ({
   );
 };
 
-const BlogParts = (props: { id: string }) => {
-  const { id } = props;
+const BlogParts = async (props: { slug: string }) => {
+  const { slug } = props;
   try {
-    const fileName = fs.readFileSync(`content/blogs/${id}.md`, "utf-8");
-    const { data, content } = matter(fileName);
+    const { frontmatter, content } = await getBlogContent(slug);
 
     return (
       <div className="mt-2 p-4 flex gap-8">
@@ -68,11 +66,11 @@ const BlogParts = (props: { id: string }) => {
           <BlogContent content={content} />
         </div>
         <BlogCard
-          title={data.title}
-          date={data.date}
+          title={frontmatter.title}
+          date={frontmatter.date}
           readingTime={calculateReadingTime(content)}
-          tags={data.tags}
-          author={data.author}
+          tags={frontmatter.tags}
+          author={frontmatter.author}
         />
       </div>
     );
@@ -81,12 +79,12 @@ const BlogParts = (props: { id: string }) => {
   }
 };
 
-export default async function Page() {
-  const router = useRouter();
+export default async function Page({ params }: NextjsParams) {
+  const { slug } = await params;
   return (
     <div>
       <Navbar />
-      <BlogParts id={router.query.id as string} />
+      <BlogParts slug={slug} />
     </div>
   );
 }

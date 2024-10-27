@@ -10,3 +10,9 @@ export type BlogConfig = {
   date: string;
   filePath: string;
 };
+
+export type NextjsParams = {
+  params: {
+    slug: string
+  }
+}

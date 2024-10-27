@@ -39,3 +39,15 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
+
+export async function getBlogContent(slug: string): Promise<{content: string, frontmatter: any}> {
+  const fullPath = path.join(process.cwd(), 'content/blogs', `${slug}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  
+  const { data, content } = matter(fileContents);
+  
+  return {
+    content,
+    frontmatter: data
+  };
+}
