@@ -12,7 +12,14 @@ export type BlogConfig = {
 };
 
 export type NextjsParams = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
+
+export type FrontMatter = {
+  title: string
+  author: string
+  tags: string[]
+  date: string
+}

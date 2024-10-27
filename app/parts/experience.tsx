@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-import useGradientArtifacts from "../components/GradientCreator/gradient";
 import Title from "../components/Title";
 import Experiences from "../data/experience";
 

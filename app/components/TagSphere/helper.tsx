@@ -44,6 +44,7 @@ export const computeInitialPosition = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateItemPosition = (item: any, sc: number[], depth: number) => {
   const newItem = { ...item, scale: "" };
   const rx1 = item.x;
@@ -54,7 +55,7 @@ export const updateItemPosition = (item: any, sc: number[], depth: number) => {
   const ry2 = ry1;
   const rz2 = rz1 * sc[3] - rx1 * sc[2];
 
-  const per = (2 * depth) / (2 * depth + rz2); // todo
+  const per = (2 * depth) / (2 * depth + rz2);
   newItem.x = rx2;
   newItem.y = ry2;
   newItem.z = rz2;
@@ -90,7 +91,7 @@ export const createItem = (
   index: number,
   textsLength: number,
   size: number,
-  itemRef: any
+  itemRef: React.RefObject<HTMLSpanElement>
 ) => {
   const transformOrigin = "50% 50%";
   const transform = "translate3d(-50%, -50%, 0) scale(1)";
@@ -111,7 +112,7 @@ export const createItem = (
     OTransform: transform,
     transform: transform,
   } as CSSProperties;
-  // @ts-ignore
+  
   const itemEl = (
     <span ref={itemRef} key={index} style={itemStyles}>
       {item}

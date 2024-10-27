@@ -3,9 +3,10 @@
 import { createRef, useEffect, useRef, useState } from "react";
 
 import { createItem, fetchIconFromText, updateItemPosition } from "./helper";
-import { defaultState, defaultStyles, tagSphereProps } from "./types";
+import { defaultStyles, tagSphereProps } from "./types";
+import Image from "next/image";
 
-export default function TagSphere(props: any) {
+export default function TagSphere(props: tagSphereProps) {
   const {
     maxSpeed,
     initialSpeed,
@@ -16,7 +17,7 @@ export default function TagSphere(props: any) {
     fullWidth,
     style,
     useContainerInlineStyles,
-  }: tagSphereProps = { ...defaultState, ...props };
+  }: tagSphereProps = props;
 
   let radius = props.radius;
 
@@ -27,14 +28,14 @@ export default function TagSphere(props: any) {
   const depth = 2 * radius;
   const size = 1.5 * radius;
   const itemHooks = skills.map(() => createRef());
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [items, setItems]: [any[], any] = useState([]);
 
   useEffect(() => {
     setItems(() =>
       skills.map((skill, index) => {
         const skillImg = (
-          // @ts-ignore
-          <img
+          <Image
             width={50}
             height={50}
             src={fetchIconFromText(skill)}
@@ -46,7 +47,7 @@ export default function TagSphere(props: any) {
           index,
           skills.length,
           size,
-          itemHooks[index]
+          itemHooks[index] as React.RefObject<HTMLSpanElement>
         );
       })
     );
@@ -60,17 +61,23 @@ export default function TagSphere(props: any) {
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0);
 
-  const handleMouseMove = (e: any) => {
-    // @ts-ignore
-    const rect = containerRef.current.getBoundingClientRect();
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return false;
+
+    const rect = (
+      containerRef.current as HTMLDivElement
+    ).getBoundingClientRect();
 
     setMouseX(() => (e.clientX - (rect.left + rect.width / 2)) / 5);
     setMouseY(() => (e.clientY - (rect.top + rect.height / 2)) / 5);
   };
 
-  const checkTouchCoordinates = (e: any) => {
-    // @ts-ignore
-    const rect = containerRef.current.getBoundingClientRect();
+  const checkTouchCoordinates = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return false;
+
+    const rect = (
+      containerRef.current as HTMLDivElement
+    ).getBoundingClientRect();
     const touchX = e.targetTouches[0].clientX;
     const touchY = e.targetTouches[0].clientY;
 
@@ -85,8 +92,8 @@ export default function TagSphere(props: any) {
 
     return false;
   };
-
   const next = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setItems((items: any) => {
       if (lessSpeed == 0) return items;
 
@@ -125,6 +132,7 @@ export default function TagSphere(props: any) {
         Math.cos(b * l),
       ];
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return items.map((item: any) => updateItemPosition(item, sc, depth));
     });
   };
@@ -143,6 +151,8 @@ export default function TagSphere(props: any) {
 
   useEffect(() => {
     init();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setItems((items: any) => [...items]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -171,9 +181,13 @@ export default function TagSphere(props: any) {
         setLessSpeed(() => maxSpeed);
         setFirstRender(() => false);
       }}
-      onTouchMove={(e) => {
+      onTouchMove={(e: React.TouchEvent<HTMLDivElement>) => {
         if (checkTouchCoordinates(e)) {
-          handleMouseMove(e.targetTouches[0]);
+          const touch = e.targetTouches[0];
+          handleMouseMove({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+          } as React.MouseEvent<HTMLDivElement>);
         } else {
           setActive(false);
         }

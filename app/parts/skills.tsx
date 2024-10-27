@@ -2,6 +2,7 @@
 
 import useGradientArtifacts from "../components/GradientCreator/gradient";
 import TagSphere from "../components/TagSphere/TagSphere";
+import { tagSphereProps } from "../components/TagSphere/types";
 import Title from "../components/Title";
 import { COMPANY, NAME } from "../data/basic";
 import { allSkills } from "../data/skills";
@@ -12,6 +13,17 @@ const SkillTree = () => {
     maxGradients: 3,
   });
 
+  const defaultStateTagSphere: tagSphereProps = {
+    skills: ["python", "java", "C++", "C", "mongoDB", "go", "rust"],
+    maxSpeed: 4,
+    initialSpeed: 64,
+    initialDirection: 135,
+    keepRollingAfterMouseOut: false,
+    useContainerInlineStyles: true,
+    fullWidth: false,
+    fullHeight: false,
+  };
+
   return (
     <div id="skills">
       {gradients}
@@ -19,13 +31,13 @@ const SkillTree = () => {
         <div className="w-full lg:w-2/3 lg:space-y-8 lg:text-lg lg:text-justify">
           <Title title="About Me" />
           <div className="space-y-4 text-sm md:text-base lg:text-lg">
-            <p>Hi, I&lsquo;m {NAME} (a.k.a. npv12)!</p>
+            <p>Hi, I‘m {NAME} (a.k.a. npv12)!</p>
             <p>I am a fullstack developer at {COMPANY}</p>
             <p>
               My passion lies in full-stack development, where I excel at
               creating seamless web experiences. I am also a dedicated advocate
               of open-source development, enjoying the process of building
-              high-quality web applications that positively impact users&lsquo;
+              high-quality web applications that positively impact users‘
               lives.
             </p>
             <p>
@@ -36,11 +48,10 @@ const SkillTree = () => {
           </div>
         </div>
         <div className="w-full lg:w-1/3">
-          <TagSphere skills={allSkills} />
+          <TagSphere {...defaultStateTagSphere} skills={allSkills} />
         </div>
       </div>
     </div>
   );
 };
-
 export default SkillTree;

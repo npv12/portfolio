@@ -14,17 +14,6 @@ export type tagSphereProps = {
   fullHeight: boolean;
 };
 
-export const defaultState: tagSphereProps = {
-  skills: ["python", "java", "C++", "C", "mongoDB", "go", "rust"],
-  maxSpeed: 4,
-  initialSpeed: 32,
-  initialDirection: 135,
-  keepRollingAfterMouseOut: false,
-  useContainerInlineStyles: true,
-  fullWidth: false,
-  fullHeight: false,
-};
-
 export const defaultStyles = {
   getContainer: (radius: number, fullWidth: boolean, fullHeight: boolean) =>
     ({

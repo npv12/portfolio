@@ -2,7 +2,7 @@ import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
 
-import { BlogPost } from "../types/blogs";
+import { BlogPost, FrontMatter } from "../types/blogs";
 
 export const calculateReadingTime = (text: string): string => {
   const wordsPerMinute = 200;
@@ -42,7 +42,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 
 export async function getBlogContent(
   slug: string
-): Promise<{ content: string; frontmatter: any }> {
+): Promise<{ content: string; frontmatter: FrontMatter }> {
   const fullPath = path.join(process.cwd(), "content/blogs", `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
 
@@ -50,6 +50,11 @@ export async function getBlogContent(
 
   return {
     content,
-    frontmatter: data,
+    frontmatter: {
+      title: data.title || '',
+      author: data.author || '',
+      tags: data.tags || [],
+      date: data.date || new Date().toISOString(),
+    },
   };
 }
