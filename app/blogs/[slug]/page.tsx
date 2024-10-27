@@ -27,7 +27,7 @@ const BlogCard = ({
   author: string;
 }) => {
   return (
-    <div className="card bg-base-200 shadow-xl p-8 mb-6 sticky top-24 z-[-1] h-fit">
+    <div className="card bg-base-200 shadow-xl p-8 mb-6 sticky top-24 h-fit">
       <h2 className="card-title text-2xl mb-4">{title}</h2>
       <div className="text-base-content/70 text-sm mb-4">
         <span className="font-medium">Published:</span>

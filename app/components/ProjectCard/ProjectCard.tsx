@@ -8,7 +8,7 @@ import { Project } from "../../types/projects";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   return (
-    <div className="card bg-neutral shadow-md text-neutral-content h-[450px] z-[-1]">
+    <div className="card bg-neutral shadow-md text-neutral-content h-[450px]">
       <div className="card-body">
         <h2 className="card-title text-xl md:text-2xl lg:text-3xl">
           {project.title}

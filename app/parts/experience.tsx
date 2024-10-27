@@ -4,7 +4,7 @@ import Title from "../components/Title";
 import Experiences from "../data/experience";
 
 const DesktopExperience: FC = () => (
-  <ul className="timeline timeline-vertical z-[-1]">
+  <ul className="timeline timeline-vertical">
     {Experiences.map((exp, index) => (
       <li key={index}>
         <hr />
@@ -52,7 +52,7 @@ const DesktopExperience: FC = () => (
 );
 
 const MobileExperience: FC = () => (
-  <ul className="timeline timeline-compact timeline-vertical mt-12 z-[-1]">
+  <ul className="timeline timeline-compact timeline-vertical mt-12">
     {Experiences.map((exp, index) => (
       <li key={index}>
         <hr />
