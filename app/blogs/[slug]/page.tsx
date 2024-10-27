@@ -65,13 +65,15 @@ const BlogParts = async (props: { slug: string }) => {
         <div className="flex-grow">
           <BlogContent content={content} />
         </div>
-        <BlogCard
-          title={frontmatter.title}
-          date={frontmatter.date}
-          readingTime={calculateReadingTime(content)}
-          tags={frontmatter.tags}
-          author={frontmatter.author}
-        />
+        <div className="hidden md:block">
+          <BlogCard
+            title={frontmatter.title}
+            date={frontmatter.date}
+            readingTime={calculateReadingTime(content)}
+            tags={frontmatter.tags}
+            author={frontmatter.author}
+          />
+        </div>
       </div>
     );
   } catch (error) {
