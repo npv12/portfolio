@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Title from "../components/Title";
 import { getBlogPosts } from "../utils/blogs";
 
 export default async function BlogsPage() {
@@ -8,8 +9,8 @@ export default async function BlogsPage() {
     <div>
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Blog Posts</h1>
-        <div className="space-y-6">
+        <Title title="Blogs" />
+        <div className="space-y-6 mt-12">
           {posts.map((post) => (
             <article key={post.slug} className="border-b pb-6">
               <a href={`/blogs/${post.slug}`} className="group">
