@@ -162,7 +162,7 @@ const Navbar = () => {
             <li key={item.name}>
               <a
                 key={item.name}
-                onClick={() => scrollToSection(item.section)}
+                onClick={() => handleNavbarNavigation(item.section)}
                 className="btn btn-ghost normal-case flex items-center justify-start"
               >
                 {item.icon}
