@@ -63,7 +63,7 @@ const Projects = () => {
   useEffect(() => {
     const start = currentPage * projectsPerPage;
     setProjectsList(projects.slice(start, start + projectsPerPage));
-  }, [projects, currentPage]);
+  }, [currentPage]);
 
   return (
     <div id="projects" className="my-8">

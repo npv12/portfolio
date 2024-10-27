@@ -30,7 +30,7 @@ const projects = [
   {
     title: "Audience Builder",
     description:
-      "Developed the Audience Builder, a comprehensive tool that compiles lists of people on Twitter along with additional data, such as direct messaging availability, wallet addresses, and users' net worth based on wallet data. This feature allows for strategic engagement and personalized interactions. Additionally, I played a key role in scaling the tool's user base from 500k to 100M, significantly enhancing its reach and impact. The Audience Builder is a powerful asset for targeted marketing, leveraging rich data insights to optimize connection strategies.",
+      "Developed the Audience Builder, a comprehensive tool that compiles lists of people on Twitter along with additional data, such as direct messaging availability, wallet addresses, and users&lsquo; net worth based on wallet data. This feature allows for strategic engagement and personalized interactions. Additionally, I played a key role in scaling the tool&lsquo;s user base from 500k to 100M, significantly enhancing its reach and impact. The Audience Builder is a powerful asset for targeted marketing, leveraging rich data insights to optimize connection strategies.",
     tags: ["Python", "Web3", "Scripting"],
   },
   {

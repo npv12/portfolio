@@ -69,6 +69,7 @@ function useGradientArtifacts({
     }
 
     setGradients(gradients);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return gradients.map((gradient, index) => (
