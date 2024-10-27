@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { createRef, useEffect, useRef, useState } from "react";
 
 import { createItem, fetchIconFromText, updateItemPosition } from "./helper";
 import { defaultStyles, tagSphereProps } from "./types";
-import Image from "next/image";
 
 export default function TagSphere(props: tagSphereProps) {
   const {

@@ -112,7 +112,7 @@ export const createItem = (
     OTransform: transform,
     transform: transform,
   } as CSSProperties;
-  
+
   const itemEl = (
     <span ref={itemRef} key={index} style={itemStyles}>
       {item}

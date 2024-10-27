@@ -77,12 +77,10 @@ const BlogParts = async (props: { slug: string }) => {
       </div>
     );
   } catch (error) {
-    console.error("Blog generation failed due to", error)
+    console.error("Blog generation failed due to", error);
     return <div>No blog found</div>;
   }
 };
-
-
 
 export default async function Page({ params }: NextjsParams) {
   const { slug } = await params;

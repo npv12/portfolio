@@ -37,8 +37,7 @@ const SkillTree = () => {
               My passion lies in full-stack development, where I excel at
               creating seamless web experiences. I am also a dedicated advocate
               of open-source development, enjoying the process of building
-              high-quality web applications that positively impact users‘
-              lives.
+              high-quality web applications that positively impact users‘ lives.
             </p>
             <p>
               I spend my free time learning new technologies and continuously

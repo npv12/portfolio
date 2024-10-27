@@ -18,8 +18,8 @@ export type NextjsParams = {
 };
 
 export type FrontMatter = {
-  title: string
-  author: string
-  tags: string[]
-  date: string
-}
+  title: string;
+  author: string;
+  tags: string[];
+  date: string;
+};

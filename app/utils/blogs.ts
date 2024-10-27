@@ -51,8 +51,8 @@ export async function getBlogContent(
   return {
     content,
     frontmatter: {
-      title: data.title || '',
-      author: data.author || '',
+      title: data.title || "",
+      author: data.author || "",
       tags: data.tags || [],
       date: data.date || new Date().toISOString(),
     },
