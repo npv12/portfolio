@@ -31,7 +31,7 @@ export default async function BlogsPage() {
             </article>
           ))}
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }

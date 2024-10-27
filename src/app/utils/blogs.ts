@@ -4,6 +4,14 @@ import path from "path";
 
 import { BlogPost } from "../types/blogs";
 
+export const calculateReadingTime = (text: string): string => {
+  const wordsPerMinute = 200;
+  const words = text.split(/\s+/).length;
+  const minutes = words / wordsPerMinute;
+  const readTime = Math.ceil(minutes);
+  return `${readTime} min read`;
+};
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const md = new MarkdownIt();
   const postsDirectory = path.join(process.cwd(), "content/blogs");
@@ -39,15 +47,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     }
 
     // Calculate reading time
-    const wordsPerMinute = 200;
-    const content = md
-      .parse(fileContents, {})
-      .filter((token: { type: string }) => token.type === "inline")
-      .map((token: { content: string }) => token.content)
-      .join(" ");
-    const wordCount = content.split(/\s+/).length;
-    const readingTime = Math.ceil(wordCount / wordsPerMinute);
-    const readingTimeText = `${readingTime} min read`;
+    const readingTimeText = calculateReadingTime(fileContents);
 
     return {
       title: frontmatter.title || filename.replace(".md", ""),
