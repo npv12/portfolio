@@ -12,17 +12,17 @@ const DesktopExperience: FC = () => (
         <div
           className={`timeline-${
             index % 2 === 0 ? "start" : "end"
-          } timeline-box`}
+          } timeline-box bg-neutral text-neutral-content`}
         >
           <div className="p-4 w-96">
             <h2 className="text-xl font-bold">{exp.company}</h2>
-            <div className="badge badge-ghost my-2 badge-md p-3">
+            <div className="badge badge-secondary text-secondary-content my-2 badge-md p-3">
               {exp.position}
             </div>
             <p className="text-sm text-gray-500">
               {exp.startDate} - {exp.endDate}
             </p>
-            <p className="mt-2 text-gray-700">{exp.description}</p>
+            <p className="mt-2 text-pretty text-justify">{exp.description}</p>
             <div className="flex flex-wrap gap-2 mt-3">
               {exp.techStack.map((tech, i) => (
                 <span key={i} className="badge badge-ghost badge-sm p-2">
