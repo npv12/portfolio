@@ -1,15 +1,5 @@
 "use client";
 
-import GlowingCircles from "../components/GlowingCircles/circles";
-import useGradientArtifacts from "../components/GradientCreator/gradient";
-import {
-  COMPANY,
-  EMAIL,
-  GITHUB,
-  LINKEDIN,
-  NAME,
-  TWITTER,
-} from "../data/basic";
 import Head from "next/head";
 import {
   PiDownloadDuotone,
@@ -18,6 +8,10 @@ import {
   PiLinkedinLogoDuotone,
   PiTwitterLogoDuotone,
 } from "react-icons/pi";
+
+import GlowingCircles from "../components/GlowingCircles/circles";
+import useGradientArtifacts from "../components/GradientCreator/gradient";
+import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, TWITTER } from "../data/basic";
 
 export default function Introduction() {
   const gradients = useGradientArtifacts();

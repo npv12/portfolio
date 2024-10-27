@@ -1,6 +1,6 @@
 import fs from "fs";
+import matter from "gray-matter";
 import path from "path";
-import matter from 'gray-matter';
 
 import { BlogPost } from "../types/blogs";
 
@@ -21,9 +21,9 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   const posts = filenames.map((filename) => {
     const fullPath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(fullPath, "utf8");
-    
+
     const { data, content } = matter(fileContents);
-    
+
     const readingTimeText = calculateReadingTime(content);
 
     return {
@@ -40,14 +40,16 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   );
 }
 
-export async function getBlogContent(slug: string): Promise<{content: string, frontmatter: any}> {
-  const fullPath = path.join(process.cwd(), 'content/blogs', `${slug}.md`);
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  
+export async function getBlogContent(
+  slug: string
+): Promise<{ content: string; frontmatter: any }> {
+  const fullPath = path.join(process.cwd(), "content/blogs", `${slug}.md`);
+  const fileContents = fs.readFileSync(fullPath, "utf8");
+
   const { data, content } = matter(fileContents);
-  
+
   return {
     content,
-    frontmatter: data
+    frontmatter: data,
   };
 }

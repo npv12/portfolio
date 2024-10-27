@@ -1,12 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import useGradientArtifacts from "../components/GradientCreator/gradient";
+import ProjectCard from "../components/ProjectCard/ProjectCard";
 import Title from "../components/Title";
 import projects from "../data/projects";
 import { Project } from "../types/projects";
-import { useEffect, useState } from "react";
-
-import ProjectCard from "../components/ProjectCard/ProjectCard";
 
 const Projects = () => {
   const [projectsList, setProjectsList] = useState<Project[]>([]);

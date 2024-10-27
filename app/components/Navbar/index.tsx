@@ -1,8 +1,5 @@
 "use client";
 
-import { NAME } from "../../data/basic";
-import { themes } from "../../data/themes";
-import { getTheme, setTheme as setGlobalTheme } from "../../utils/cookie";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,6 +12,10 @@ import {
   PiQuotesDuotone,
   PiTextOutdentDuotone,
 } from "react-icons/pi";
+
+import { NAME } from "../../data/basic";
+import { themes } from "../../data/themes";
+import { getTheme, setTheme as setGlobalTheme } from "../../utils/cookie";
 
 const Navbar = () => {
   const router = useRouter();

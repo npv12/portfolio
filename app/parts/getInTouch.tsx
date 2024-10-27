@@ -1,4 +1,3 @@
-import Title from "../components/Title";
 import React from "react";
 import {
   PiEnvelopeDuotone,
@@ -6,6 +5,7 @@ import {
   PiTwitterLogoDuotone,
 } from "react-icons/pi";
 
+import Title from "../components/Title";
 import { EMAIL, LINKEDIN, TWITTER } from "../data/basic";
 
 const GetInTouch: React.FC = () => {

@@ -1,9 +1,10 @@
-import { Project } from "../../types/projects";
 import {
   PiGithubLogoDuotone,
   PiLinkDuotone,
   PiMediumLogoDuotone,
 } from "react-icons/pi";
+
+import { Project } from "../../types/projects";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   return (

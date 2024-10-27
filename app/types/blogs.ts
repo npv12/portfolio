@@ -13,6 +13,6 @@ export type BlogConfig = {
 
 export type NextjsParams = {
   params: {
-    slug: string
-  }
-}
+    slug: string;
+  };
+};

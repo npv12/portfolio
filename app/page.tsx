@@ -1,10 +1,9 @@
 import Navbar from "./components/Navbar";
+import Experience from "./parts/experience";
 import GetInTouch from "./parts/getInTouch";
 import Introduction from "./parts/intro";
 import Projects from "./parts/projects";
 import SkillTree from "./parts/skills";
-
-import Experience from "./parts/experience";
 
 export default function Home() {
   return (
