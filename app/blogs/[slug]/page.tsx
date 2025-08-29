@@ -85,7 +85,7 @@ const BlogParts = async (props: { slug: string }) => {
 
     return (
       <div className="mt-2 p-4 flex gap-8">
-        <div className="flex-grow">
+        <div className="grow">
           <BlogContent content={content} />
         </div>
         <div className="hidden md:block">

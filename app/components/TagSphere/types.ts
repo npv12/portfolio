@@ -24,5 +24,5 @@ export const defaultStyles = {
       height: fullHeight ? "100%" : `${2 * radius}px`,
       touchAction: "none",
       zIndex: -1,
-    } as CSSProperties),
+    }) as CSSProperties,
 };

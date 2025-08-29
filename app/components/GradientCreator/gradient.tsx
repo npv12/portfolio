@@ -75,7 +75,7 @@ function useGradientArtifacts({
   return gradients.map((gradient, index) => (
     <div
       key={index}
-      className="absolute bg-gradient-to-r from-primary to-accent rounded-full blur-[90px] z-[-1]"
+      className="absolute bg-linear-to-r from-primary to-accent rounded-full blur-[90px] z-[-1]"
       style={{
         top: `${gradient.top}px`,
         left: `${gradient.left}%`,

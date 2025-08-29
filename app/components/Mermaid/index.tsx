@@ -52,7 +52,7 @@ const Mermaid = (props: MermaidProps) => {
           onClick={() => setEnlarged(false)}
         >
           <div
-            className="bg-base-100 p-8 rounded-xl shadow-2xl max-w-8xl w-full max-h-[100vh] overflow-auto cursor-zoom-out"
+            className="bg-base-100 p-8 rounded-xl shadow-2xl max-w-8xl w-full max-h-screen overflow-auto cursor-zoom-out"
             data-theme="light"
             style={{ minHeight: 300 }}
             onClick={(e) => {
