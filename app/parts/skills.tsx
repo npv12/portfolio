@@ -4,7 +4,7 @@ import useGradientArtifacts from "../components/GradientCreator/gradient";
 import TagSphere from "../components/TagSphere/TagSphere";
 import { tagSphereProps } from "../components/TagSphere/types";
 import Title from "../components/Title";
-import { COMPANY, NAME } from "../data/basic";
+import { COMPANY, NAME, POSITION } from "../data/basic";
 import { allSkills } from "../data/skills";
 
 const SkillTree = () => {
@@ -32,10 +32,10 @@ const SkillTree = () => {
           <Title title="About Me" />
           <div className="space-y-4 text-sm md:text-base lg:text-lg">
             <p>Hi, I‘m {NAME} (a.k.a. npv12)!</p>
-            <p>I am a fullstack developer at {COMPANY}</p>
+            <p>I am a {POSITION} at {COMPANY}</p>
             <p>
-              My passion lies in full-stack development, where I excel at
-              creating seamless web experiences. I am also a dedicated advocate
+              My passion lies in backend engineering, where I excel at
+              creating scalable and maintainable softwares. I am also a dedicated advocate
               of open-source development, enjoying the process of building
               high-quality web applications that positively impact users‘ lives.
             </p>

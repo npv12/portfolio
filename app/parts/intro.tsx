@@ -11,7 +11,7 @@ import {
 
 import GlowingCircles from "../components/GlowingCircles/circles";
 import useGradientArtifacts from "../components/GradientCreator/gradient";
-import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, TWITTER } from "../data/basic";
+import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, POSITION, TWITTER } from "../data/basic";
 
 export default function Introduction() {
   const gradients = useGradientArtifacts();
@@ -31,7 +31,7 @@ export default function Introduction() {
         </h2>
       </div>
       <p className="mt-4 lg:text-2xl text-xl">
-        I am a Full Stack Developer working at {COMPANY}
+        I am a {POSITION} working at {COMPANY}
       </p>
       <div className="flex space-x-4 mt-6">
         <a

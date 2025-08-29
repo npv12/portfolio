@@ -1,5 +1,6 @@
 export const NAME = "Pranav Nedungadi";
-export const COMPANY = "Blaze AI (YC W22)";
+export const POSITION = "Software Developer";
+export const COMPANY = "Dream 11";
 
 export const EMAIL = "pranav10121@gmail.com";
 export const LINKEDIN = "https://www.linkedin.com/in/npv12/";
