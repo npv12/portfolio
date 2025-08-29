@@ -39,7 +39,7 @@ const GetInTouch: React.FC = () => {
               Feel free to reach out for collaborations, opportunities, or just
               to say hello!
             </p>
-            <div className="space-y-4 space-x-10 mt-14">
+            <div className="flex flex-row items-center space-x-10 mt-14">
               <a
                 href={`mailto:${EMAIL}`}
                 className="p-3 bg-base-300 rounded-full hover:bg-primary/20 transition-colors tooltip"
