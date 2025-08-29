@@ -26,7 +26,12 @@ const GetInTouch: React.FC = () => {
               </p>
             </div>
             <div className="mt-6">
-              <button className="btn btn-primary">View Blogs</button>
+              <a
+                href="/blogs/sequence-server-architecture"
+                className="btn btn-primary"
+              >
+                View Blog: Sequence Server Architecture
+              </a>
             </div>
           </div>
         </div>

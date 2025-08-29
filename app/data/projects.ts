@@ -1,18 +1,20 @@
+const HOST_LINK = "https://portfolio-pranavs-projects-1ca3ecef.vercel.app";
+
 const projects = [
   {
     title: "Personal Portfolio",
     description:
       "Developed a personal developer portfolio from scratch using Next.js and Daisy UI. The project showcases my work, skills, and blog posts, with a clean, responsive design. Implemented dynamic routing for blog pages. The portfolio highlights user-friendly features and a modern UI, demonstrating my ability to build sophisticated web applications from the ground up.",
-    link: "https://portfolio-pranavs-projects-1ca3ecef.vercel.app",
+    link: HOST_LINK,
     githubLink: "https://github.com/npv12/portfolio",
-    liveLink: "https://portfolio-pranavs-projects-1ca3ecef.vercel.app",
-    // blogLink: "https://github.com/npv12/npv12.github.io",
+    liveLink: HOST_LINK,
     tags: ["Next.js", "React", "TailwindCSS", "DaisyUI"],
   },
   {
     title: "Sequences",
     description:
       "Developed Sequences, a dynamic messaging tool that enables sending direct messages and follow-ups based on response sentiment. If the sentiment is positive, Sequences sends a positive reply. It curates responses and allows for intricate follow-up workflows on Twitter and LinkedIn. The platform is designed for seamless communication, ensuring timely and contextually relevant interactions. This tool enhances engagement and streamlines complex messaging workflows across social media platforms.",
+    liveLink: HOST_LINK + "/blogs/sequence-server-architecture",
     tags: ["FastAPI", "Twitter", "LinkedIn", "React", "AWS"],
   },
   {
