@@ -35,7 +35,7 @@ Next.js is a React framework that enables features like server-side rendering an
 
 npx create-next-app@latest my-next-app
 cd my-next-app
-npm run dev
+yarn dev
 
 
 ### Basic Project Structure
