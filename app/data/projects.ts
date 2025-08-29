@@ -2,10 +2,16 @@ const HOST_LINK = "https://portfolio-pranavs-projects-1ca3ecef.vercel.app";
 
 const projects = [
   {
+    "title": "Neurospend",
+    "description": "NeuroSpend is a modern, full-stack expense management platform built for Indian users. It features automated bank statement parsing for major Indian banks (Axis, SBI, HDFC), AI-powered smart categorization, and advanced analytics. The stack includes Go (Gin), Next.js 15, TypeScript, and PostgreSQL, with secure JWT authentication, real-time updates via React Query, robust error handling, and complete type safety. NeuroSpend supports responsive design, offline usage, and comprehensive testing, providing a scalable, maintainable, and developer-friendly solution for intelligent expense tracking and insights.",
+    githubLink: "https://github.com/trainjumpers/neurospend",
+    liveLink: "https://neurospend.vercel.app",
+    tags: ["Go", "Next.js", "TypeScript", "expense management"],
+  },
+  {
     title: "Personal Portfolio",
     description:
       "Developed a personal developer portfolio from scratch using Next.js and Daisy UI. The project showcases my work, skills, and blog posts, with a clean, responsive design. Implemented dynamic routing for blog pages. The portfolio highlights user-friendly features and a modern UI, demonstrating my ability to build sophisticated web applications from the ground up.",
-    link: HOST_LINK,
     githubLink: "https://github.com/npv12/portfolio",
     liveLink: HOST_LINK,
     tags: ["Next.js", "React", "TailwindCSS", "DaisyUI"],
