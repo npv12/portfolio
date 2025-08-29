@@ -1,15 +1,42 @@
 import { NextjsParams } from "@/app/types/blogs";
+import parse, { DOMNode, Element, Text, domToReact } from "html-react-parser";
 import { marked } from "marked";
 
+import Mermaid from "../../components/Mermaid";
 import Navbar from "../../components/Navbar";
 import { calculateReadingTime, getBlogContent } from "../../utils/blogs";
+import { useMemo } from "react";
 
 const BlogContent = ({ content }: { content: string }) => {
+  const options = {
+    replace: (domNode: DOMNode) => {
+      if (domNode instanceof Element && domNode.tagName === "pre") {
+        const codeElement = domNode.children[0] as Element;
+        if (
+          codeElement &&
+          codeElement.tagName === "code" &&
+          codeElement.attribs.class === "language-mermaid"
+        ) {
+          const code = codeElement.children[0];
+          if (code instanceof Text && code.data)
+            return <Mermaid graph={code.data} />;
+        }
+      }
+      if (domNode instanceof Element) return domToReact([domNode]);
+      return null;
+    },
+  };
+  
+  const renderedHTML = useMemo(async () => {
+    const parsedContent = await marked.parse(content);
+    return parse(parsedContent, options);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content]); 
+
   return (
-    <div
-      className="prose mx-auto lg:prose-lg"
-      dangerouslySetInnerHTML={{ __html: marked.parse(content) }}
-    />
+    <div className="prose mx-auto lg:prose-lg">
+      {renderedHTML}
+    </div>
   );
 };
 
@@ -27,7 +54,7 @@ const BlogCard = ({
   author: string;
 }) => {
   return (
-    <div className="card bg-base-200 shadow-xl p-8 mb-6 sticky top-24 h-fit">
+    <div className="card bg-base-200 shadow-xl p-8 mb-6 sticky top-24 h-fit w-[500px]">
       <h2 className="card-title text-2xl mb-4">{title}</h2>
       <div className="text-base-content/70 text-sm mb-4">
         <span className="font-medium">Published:</span>
@@ -40,8 +67,8 @@ const BlogCard = ({
         <span className="font-medium">Author:</span> {author}
       </div>
       <div className="mb-4">
-        <div className="flex items-center gap-3">
-          <span className="font-medium">Tags:</span>
+        <div>
+          <span className="font-medium block mb-2">Tags:</span>
           <div className="flex flex-wrap gap-3">
             {tags.map((tag: string) => (
               <span key={tag} className="badge badge-ghost px-4 py-3">
