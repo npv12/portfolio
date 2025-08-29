@@ -1,11 +1,11 @@
 import { NextjsParams } from "@/app/types/blogs";
 import parse, { DOMNode, Element, Text, domToReact } from "html-react-parser";
 import { marked } from "marked";
+import { useMemo } from "react";
 
 import Mermaid from "../../components/Mermaid";
 import Navbar from "../../components/Navbar";
 import { calculateReadingTime, getBlogContent } from "../../utils/blogs";
-import { useMemo } from "react";
 
 const BlogContent = ({ content }: { content: string }) => {
   const options = {
@@ -26,18 +26,14 @@ const BlogContent = ({ content }: { content: string }) => {
       return null;
     },
   };
-  
+
   const renderedHTML = useMemo(async () => {
     const parsedContent = await marked.parse(content);
     return parse(parsedContent, options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content]); 
+  }, [content]);
 
-  return (
-    <div className="prose mx-auto lg:prose-lg">
-      {renderedHTML}
-    </div>
-  );
+  return <div className="prose mx-auto lg:prose-lg">{renderedHTML}</div>;
 };
 
 const BlogCard = ({
