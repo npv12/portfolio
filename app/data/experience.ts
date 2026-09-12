@@ -7,7 +7,7 @@ const Experiences: Experience[] = [
     startDate: "May 2026",
     endDate: "Present",
     description:
-      "Building agentic security operations software at Simbian.",
+      "I built tenant-scoped agent workflows for SOC investigations and threat hunts on a Django multi-tenant platform. That includes configurable shortcuts with authoring, health/repair, and portable import/export; a dual-engine investigation list over Postgres and a columnar store with dialect-safe filters; and integrations that feed alerts into the agent harness, including CrowdStrike and ServiceNow. I also shipped custom case workflow statuses, SOC dashboard metric fixes, threat-hunt skill versioning with execution-log provenance, and the React surfaces operators use to run these jobs.",
     techStack: ["Python", "Django", "PostgreSQL", "TypeScript", "React"],
   },
   {
