@@ -25,13 +25,28 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     const { data, content } = matter(fileContents);
 
     const readingTimeText = calculateReadingTime(content);
+    const description =
+      data.description ||
+      content
+        .split("\n")
+        .map((line) => line.trim())
+        .find(
+          (line) =>
+            line.length > 40 &&
+            !line.startsWith("#") &&
+            !line.startsWith("```") &&
+            !line.startsWith("---")
+        )
+        ?.replace(/[*_`]/g, "")
+        .slice(0, 180) ||
+      "";
 
     return {
       title: data.title || filename.replace(".md", ""),
       date: data.date || new Date().toISOString(),
       slug: filename.replace(".md", ""),
       readingTime: readingTimeText,
-      description: data.description || "",
+      description,
     };
   });
 
