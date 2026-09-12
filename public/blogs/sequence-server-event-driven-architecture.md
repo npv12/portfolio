@@ -8,7 +8,7 @@ tags: ["Outreach", "Event-Driven", "Architecture", "Data Model", "Sequences", "R
 # From Crons to Real-Time: Our Event-Driven Outreach Architecture
 
 ## TL;DR
-We rebuilt the engine as **event-driven**: sequences compiled into a DAG; a **Trigger Engine** advances leads on inbound events/timeouts; an **Action Scheduler** enforces a **pre-send compliance gate** and **token-bucket rate limits**; **Provider Adapters** send via official APIs; **Inbound Ingestors** normalize replies/follow-backs. We added an **outbox** and an **append-only events log** for auditability. Migration was incremental—no big-bang.
+We rebuilt the engine as **event-driven**: sequences compiled into a DAG; a **Trigger Engine** advances leads on inbound events/timeouts; an **Action Scheduler** enforces a **pre-send compliance gate** and **token-bucket rate limits**; **Provider Adapters** send via official APIs; **Inbound Ingestors** normalize replies/follow-backs. We added an **outbox** and an **append-only events log** for auditability. Migration was incremental, no big-bang.
 
 ---
 
@@ -22,7 +22,7 @@ We rebuilt the engine as **event-driven**: sequences compiled into a DAG; a **Tr
 
 ---
 
-## HLD — Event-Driven Architecture
+## HLD: Event-Driven Architecture
 
 ```mermaid
 flowchart TD
@@ -98,7 +98,7 @@ flowchart TD
 
 ---
 
-## LLD — Core Flows
+## LLD: Core Flows
 
 ### 1) Reply-Driven Fast Path (Follow → Follow-Back → DM → Positive Reply)
 ```mermaid
@@ -242,7 +242,7 @@ classDiagram
 
 ---
 
-## Appendix — Practical Tips
+## Appendix: Practical Tips
 - Include `template_id`/`variant_id` in `ActionScheduled.payload`; persist the chosen variant in `ActionSent`.
 - Use FIFO queues with per-lead message-group IDs to guarantee ordering if you go with SQS.
 - Build dashboards for queue lag, 429 rate, success/fail per provider, stuck leads, time-to-reply.
