@@ -2,10 +2,19 @@ import Experience from "../types/experience";
 
 const Experiences: Experience[] = [
   {
+    company: "Simbian",
+    position: "Software Developer",
+    startDate: "May 2026",
+    endDate: "Present",
+    description:
+      "Building agentic security operations software at Simbian.",
+    techStack: ["Python", "Django", "PostgreSQL", "TypeScript", "React"],
+  },
+  {
     company: "Dream11",
     position: "Software Developer",
     startDate: "Nov 2024",
-    endDate: "Present",
+    endDate: "Apr 2026",
     description:
       "I engineered a multi-cluster GKE deployment system using Karmada, developing two Kubernetes operators in Go to overcome GCP's performance bottlenecks by automating load balancerprovisioning and routing updates. This platform-building extended to the network layer, where I built Fabric, a custom service discovery system in Go for hybrid workloads. At Blaze AI, I not only built a stateful workflow engine that drove 50% of revenue, but also cut AWS costs by 80% through rigorous monitoring of slow queries, data pipeline optimization, and strategic database indexing.",
     techStack: ["Go", "Java", "Vertx", "Kubernetes", "Kafka"],
