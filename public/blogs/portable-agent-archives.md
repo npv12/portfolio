@@ -1,6 +1,7 @@
 ---
 title: "Shipping a Portable Agent Archive Without Sharing the Runtime"
 date: "2026-02-17"
+description: "A closed manifest, create-only import, disabled landing, and reverse-order rollback."
 author: "Pranav Nedungadi"
 tags: ["Agents", "Import Export", "Archives", "Multi-tenant"]
 ---

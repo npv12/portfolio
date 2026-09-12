@@ -1,6 +1,7 @@
 ---
 title: "Same Filter, Two Engines: Postgres vs Columnar NULL Semantics"
 date: "2025-07-16"
+description: "Postgres IS NOT TRUE includes NULL. Several columnar engines drop it. Shared filters need a dialect."
 author: "Pranav Nedungadi"
 tags: ["SQL", "Postgres", "Columnar", "NULL", "Query Engines"]
 ---

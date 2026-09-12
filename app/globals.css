@@ -27,10 +27,4 @@
   display: none;
 }
 
-/* Custom typography extension for h1 gradient text */
-h1 {
-  background-image: linear-gradient(to right, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+

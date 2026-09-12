@@ -1,6 +1,7 @@
 ---
 title: "When One System Artifact Lives in a Reserved Namespace"
 date: "2025-11-04"
+description: "Create, import, and the owner service are three authorization paths when one system job lives in a reserved prefix."
 author: "Pranav Nedungadi"
 tags: ["API Design", "Namespaces", "Authorization", "Job Specs"]
 ---

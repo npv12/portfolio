@@ -14,7 +14,7 @@ const SkillTree = () => {
   });
 
   const defaultStateTagSphere: tagSphereProps = {
-    skills: ["python", "java", "C++", "C", "mongoDB", "go", "rust"],
+    skills: ["python", "java", "go", "rust", "postgresql"],
     maxSpeed: 4,
     initialSpeed: 64,
     initialDirection: 135,
@@ -25,26 +25,21 @@ const SkillTree = () => {
   };
 
   return (
-    <div id="skills">
+    <div id="skills" className="py-8">
       {gradients}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:space-x-40">
-        <div className="w-full lg:w-2/3 lg:space-y-8 lg:text-lg lg:text-justify">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:gap-16">
+        <div className="w-full lg:w-2/3 space-y-4 text-sm md:text-base lg:text-lg">
           <Title title="About Me" />
-          <div className="space-y-4 text-sm md:text-base lg:text-lg">
-            <p>Hi, I‘m {NAME} (a.k.a. npv12)!</p>
-            <p>I am a {POSITION} at {COMPANY}</p>
-            <p>
-              My passion lies in backend engineering, where I excel at
-              creating scalable and maintainable softwares. I am also a dedicated advocate
-              of open-source development, enjoying the process of building
-              high-quality web applications that positively impact users‘ lives.
-            </p>
-            <p>
-              I spend my free time learning new technologies and continuously
-              challenging myself to enhance my skills and stay current with the
-              latest industry trends.
-            </p>
-          </div>
+          <p>Hi, I&apos;m {NAME} (npv12).</p>
+          <p>
+            I am a {POSITION} at {COMPANY}, mostly on backend systems: multi-tenant
+            Django, SQL, and agent workflows for security operations.
+          </p>
+          <p>
+            Before that I worked on Kubernetes platforms at Dream11 and on
+            campaign/data pipelines at Blaze AI. I like keeping the query layer
+            honest and the job-spec surface small.
+          </p>
         </div>
         <div className="w-full lg:w-1/3">
           <TagSphere {...defaultStateTagSphere} skills={allSkills} />

@@ -8,16 +8,23 @@ import { Project } from "../../types/projects";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   return (
-    <div className="card bg-neutral shadow-md text-neutral-content h-[450px]">
+    <div className="card bg-neutral shadow-md text-neutral-content h-full min-h-80">
       <div className="card-body">
-        <h2 className="card-title text-xl md:text-2xl lg:text-3xl">
+        <h2 className="card-title text-xl md:text-2xl">
           {project.title}
         </h2>
-        <p className="text-sm mt-4 text-pretty text-justify">
+        <p className="text-sm mt-4 text-pretty text-justify grow">
           {project.description.split(" ").slice(0, 75).join(" ")}
           {project.description.split(" ").length > 75 && "..."}
         </p>
-        <div className="flex flex-wrap gap-2 mt-6">
+        <div className="flex flex-wrap gap-2 mt-4">
+          {project.tags.map((tag) => (
+            <span key={tag} className="badge badge-ghost badge-sm">
+              {tag}
+            </span>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2 mt-4">
           {project.githubLink && (
             <div
               className="btn"

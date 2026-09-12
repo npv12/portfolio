@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import useGradientArtifacts from "../components/GradientCreator/gradient";
 import ProjectCard from "../components/ProjectCard/ProjectCard";
@@ -9,7 +9,6 @@ import projects from "../data/projects";
 import { Project } from "../types/projects";
 
 const Projects = () => {
-  const [projectsList, setProjectsList] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const gradients = useGradientArtifacts({
     maxGradients: 10,
@@ -18,20 +17,20 @@ const Projects = () => {
 
   const projectsPerPage = 6;
   const totalPages = Math.ceil(projects.length / projectsPerPage);
-
-  useEffect(() => {
-    const start = currentPage * projectsPerPage;
-    setProjectsList(projects.slice(start, start + projectsPerPage));
-  }, [currentPage]);
+  const start = currentPage * projectsPerPage;
+  const projectsList: Project[] = projects.slice(
+    start,
+    start + projectsPerPage
+  );
 
   return (
-    <div id="projects" className="my-8">
+    <div id="projects" className="py-16">
       <Title title="Projects" />
       {gradients}
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 mb-6">
           {projectsList.map((project) => (
-            <div key={project.title}>
+            <div key={project.title} className="h-full">
               <ProjectCard project={project} />
             </div>
           ))}

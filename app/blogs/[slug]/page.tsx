@@ -1,39 +1,38 @@
 import { NextjsParams } from "@/app/types/blogs";
 import parse, { DOMNode, Element, Text, domToReact } from "html-react-parser";
 import { marked } from "marked";
-import { useMemo } from "react";
+import { notFound } from "next/navigation";
 
 import Mermaid from "../../components/Mermaid";
 import Navbar from "../../components/Navbar";
-import { calculateReadingTime, getBlogContent } from "../../utils/blogs";
+import { calculateReadingTime, getBlogContent, getBlogPosts } from "../../utils/blogs";
 
-const BlogContent = ({ content }: { content: string }) => {
-  const options = {
-    replace: (domNode: DOMNode) => {
-      if (domNode instanceof Element && domNode.tagName === "pre") {
-        const codeElement = domNode.children[0] as Element;
-        if (
-          codeElement &&
-          codeElement.tagName === "code" &&
-          codeElement.attribs.class === "language-mermaid"
-        ) {
-          const code = codeElement.children[0];
-          if (code instanceof Text && code.data)
-            return <Mermaid graph={code.data} />;
-        }
+const parseOptions = {
+  replace: (domNode: DOMNode) => {
+    if (domNode instanceof Element && domNode.tagName === "pre") {
+      const codeElement = domNode.children[0] as Element;
+      if (
+        codeElement &&
+        codeElement.tagName === "code" &&
+        codeElement.attribs.class === "language-mermaid"
+      ) {
+        const code = codeElement.children[0];
+        if (code instanceof Text && code.data)
+          return <Mermaid graph={code.data} />;
       }
-      if (domNode instanceof Element) return domToReact([domNode]);
-      return null;
-    },
-  };
+    }
+    if (domNode instanceof Element) return domToReact([domNode]);
+    return null;
+  },
+};
 
-  const renderedHTML = useMemo(async () => {
-    const parsedContent = await marked.parse(content);
-    return parse(parsedContent, options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content]);
-
-  return <div className="prose mx-auto lg:prose-lg">{renderedHTML}</div>;
+const BlogContent = async ({ content }: { content: string }) => {
+  const parsedContent = await marked.parse(content);
+  return (
+    <div className="prose mx-auto lg:prose-lg max-w-none">
+      {parse(parsedContent, parseOptions)}
+    </div>
+  );
 };
 
 const BlogCard = ({
@@ -50,45 +49,58 @@ const BlogCard = ({
   author: string;
 }) => {
   return (
-    <div className="card bg-base-200 shadow-xl p-8 mb-6 sticky top-24 h-fit w-[500px]">
-      <h2 className="card-title text-2xl mb-4">{title}</h2>
-      <div className="text-base-content/70 text-sm mb-4">
-        <span className="font-medium">Published:</span>
-        {new Date(date).toLocaleDateString()}
+    <aside className="card bg-base-200 shadow-xl p-6 sticky top-24 h-fit w-72">
+      <h2 className="card-title text-lg mb-4">{title}</h2>
+      <div className="text-base-content/70 text-sm space-y-2">
+        <p>
+          <span className="font-medium">Published </span>
+          {new Date(date).toLocaleDateString()}
+        </p>
+        <p>
+          <span className="font-medium">Reading time </span>
+          {readingTime}
+        </p>
+        <p>
+          <span className="font-medium">Author </span>
+          {author}
+        </p>
       </div>
-      <div className="text-base-content/70 text-sm mb-4">
-        <span className="font-medium">Reading Time:</span> {readingTime}
-      </div>
-      <div className="text-base-content/70 text-sm mb-4">
-        <span className="font-medium">Author:</span> {author}
-      </div>
-      <div className="mb-4">
-        <div>
-          <span className="font-medium block mb-2">Tags:</span>
-          <div className="flex flex-wrap gap-3">
-            {tags.map((tag: string) => (
-              <span key={tag} className="badge badge-ghost px-4 py-3">
-                {tag}
-              </span>
-            ))}
-          </div>
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {tags.map((tag: string) => (
+            <span key={tag} className="badge badge-ghost">
+              {tag}
+            </span>
+          ))}
         </div>
-      </div>
-    </div>
+      )}
+    </aside>
   );
 };
 
-const BlogParts = async (props: { slug: string }) => {
-  const { slug } = props;
-  try {
-    const { frontmatter, content } = await getBlogContent(slug);
+export async function generateStaticParams() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
-    return (
-      <div className="mt-2 p-4 flex gap-8">
-        <div className="grow">
+export default async function Page({ params }: NextjsParams) {
+  const { slug } = await params;
+  let frontmatter;
+  let content;
+  try {
+    ({ frontmatter, content } = await getBlogContent(slug));
+  } catch {
+    notFound();
+  }
+
+  return (
+    <div>
+      <Navbar />
+      <div className="mt-2 p-4 md:p-8 flex gap-8 max-w-6xl mx-auto">
+        <div className="grow min-w-0">
           <BlogContent content={content} />
         </div>
-        <div className="hidden md:block">
+        <div className="hidden lg:block shrink-0">
           <BlogCard
             title={frontmatter.title}
             date={frontmatter.date}
@@ -98,19 +110,6 @@ const BlogParts = async (props: { slug: string }) => {
           />
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error("Blog generation failed due to", error);
-    return <div>No blog found</div>;
-  }
-};
-
-export default async function Page({ params }: NextjsParams) {
-  const { slug } = await params;
-  return (
-    <div>
-      <Navbar />
-      <BlogParts slug={slug} />
     </div>
   );
 }

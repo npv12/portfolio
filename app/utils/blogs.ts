@@ -31,6 +31,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       date: data.date || new Date().toISOString(),
       slug: filename.replace(".md", ""),
       readingTime: readingTimeText,
+      description: data.description || "",
     };
   });
 

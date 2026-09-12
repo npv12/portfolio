@@ -3,6 +3,7 @@ export type BlogPost = {
   date: string;
   slug: string;
   readingTime: string;
+  description: string;
 };
 
 export type BlogConfig = {

@@ -1,28 +1,8 @@
-export const languages = [
-  "JavaScript",
-  "TypeScript",
-  "Rust",
-  "C++",
-  "C",
-  "Kotlin",
-  "Go",
-  "Rust",
-];
-export const uiFrameworkOrComponents = [
-  "TailwindCSS",
-  "Material UI",
-  "Bootstrap",
-];
-export const frameworkOrLibraries = [
-  "Sass",
-  "React",
-  "NextJs",
-  "Vue",
-  "Svelte",
-  "NodeJs",
-];
-export const databases = ["Firebase", "MariaDB", "MongoDB", "MySQL"];
-export const others = ["Figma", "VsCode", "ViteJS", "Linux", "RHEL"];
+export const languages = ["Python", "Go", "TypeScript", "Java", "Rust"];
+export const uiFrameworkOrComponents = ["React", "NextJs", "TailwindCSS"];
+export const frameworkOrLibraries = ["Django", "FastAPI", "NodeJs"];
+export const databases = ["PostgreSQL", "Redis", "MongoDB"];
+export const others = ["Kubernetes", "Docker", "Terraform", "AWS", "Linux"];
 
 export const allSkills = [
   ...languages,

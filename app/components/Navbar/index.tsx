@@ -61,7 +61,7 @@ const Navbar = () => {
     if (section === "blogs") {
       router.push("/blogs");
     } else if (window.location.pathname !== "/") {
-      router.push("/");
+      router.push(`/#${section}`);
     } else {
       scrollToSection(section);
     }
@@ -69,6 +69,10 @@ const Navbar = () => {
 
   useEffect(() => {
     setIsClient(true);
+    const hash = window.location.hash.replace("#", "");
+    if (hash && window.location.pathname === "/") {
+      scrollToSection(hash);
+    }
   }, []);
 
   useEffect(() => {
@@ -82,7 +86,7 @@ const Navbar = () => {
       <input id="navbar-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
-        <div className="navbar bg-base-300 w-full">
+        <div className="navbar bg-base-300/80 backdrop-blur-md w-full">
           <div className="flex-none lg:hidden">
             <label
               htmlFor="navbar-drawer"
@@ -106,7 +110,7 @@ const Navbar = () => {
                   <a
                     key={item.name}
                     onClick={() => handleNavbarNavigation(item.section)}
-                    className="font-bold normal-case flex items-center"
+                    className="font-bold normal-case flex items-center cursor-pointer"
                   >
                     {item.icon}
                     {item.name}
