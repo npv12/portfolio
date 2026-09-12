@@ -1,7 +1,9 @@
 import { CSSProperties } from "react";
 
+import { Skill } from "../../data/skills";
+
 export type tagSphereProps = {
-  skills: string[];
+  skills: Skill[];
   radius?: number;
   maxSpeed: number;
   initialSpeed: number;

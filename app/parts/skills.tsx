@@ -8,7 +8,7 @@ import { allSkills } from "../data/skills";
 
 const SkillTree = () => {
   const defaultStateTagSphere: tagSphereProps = {
-    skills: ["python", "java", "go", "rust", "postgresql"],
+    skills: allSkills,
     maxSpeed: 4,
     initialSpeed: 64,
     initialDirection: 135,
@@ -35,7 +35,7 @@ const SkillTree = () => {
           </p>
         </div>
         <div className="w-full lg:w-1/3">
-          <TagSphere {...defaultStateTagSphere} skills={allSkills} />
+          <TagSphere {...defaultStateTagSphere} />
         </div>
       </div>
     </div>

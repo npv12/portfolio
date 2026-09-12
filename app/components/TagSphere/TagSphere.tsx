@@ -5,10 +5,12 @@ import { createRef, useEffect, useRef, useState } from "react";
 import { createItem, SphereItem, updateItemPosition } from "./helper";
 import { defaultStyles, tagSphereProps } from "./types";
 
-const buildItems = (skills: string[], size: number): SphereItem[] =>
+const buildItems = (skills: tagSphereProps["skills"], size: number): SphereItem[] =>
   skills.map((skill, index) =>
     createItem(
-      <span className="text-sm font-semibold whitespace-nowrap">{skill}</span>,
+      <span title={skill.name} className="inline-flex text-base-content">
+        <skill.Icon size={36} aria-label={skill.name} />
+      </span>,
       index,
       skills.length,
       size,
