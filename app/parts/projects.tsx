@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import useGradientArtifacts from "../components/GradientCreator/gradient";
 import ProjectCard from "../components/ProjectCard/ProjectCard";
 import Title from "../components/Title";
 import projects from "../data/projects";
@@ -10,10 +9,6 @@ import { Project } from "../types/projects";
 
 const Projects = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const gradients = useGradientArtifacts({
-    maxGradients: 10,
-    heightMultiplier: 4,
-  });
 
   const projectsPerPage = 6;
   const totalPages = Math.ceil(projects.length / projectsPerPage);
@@ -26,7 +21,6 @@ const Projects = () => {
   return (
     <div id="projects" className="py-16">
       <Title title="Projects" />
-      {gradients}
       <div className="container mx-auto mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 mb-6">
           {projectsList.map((project) => (

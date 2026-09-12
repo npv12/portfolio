@@ -16,7 +16,7 @@ const Experiences: Experience[] = [
     startDate: "Nov 2024",
     endDate: "Nov 2025",
     description:
-      "I engineered a multi-cluster GKE deployment system using Karmada, developing two Kubernetes operators in Go to overcome GCP's performance bottlenecks by automating load balancerprovisioning and routing updates. This platform-building extended to the network layer, where I built Fabric, a custom service discovery system in Go for hybrid workloads. At Blaze AI, I not only built a stateful workflow engine that drove 50% of revenue, but also cut AWS costs by 80% through rigorous monitoring of slow queries, data pipeline optimization, and strategic database indexing.",
+      "I engineered a multi-cluster GKE deployment system using Karmada, developing two Kubernetes operators in Go to automate load-balancer provisioning and routing updates. I also built Fabric, a custom service discovery system in Go for hybrid Kubernetes and EC2 workloads, and a NaaS API for cross-account VPC peering and CIDR allocation across AWS and GCP.",
     techStack: ["Go", "Java", "Vertx", "Kubernetes", "Kafka"],
   },
   {

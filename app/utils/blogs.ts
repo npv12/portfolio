@@ -71,6 +71,7 @@ export async function getBlogContent(
       author: data.author || "",
       tags: data.tags || [],
       date: data.date || new Date().toISOString(),
+      description: data.description || "",
     },
   };
 }

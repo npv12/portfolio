@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @plugin "daisyui" {
-  themes: all;
-};
+  themes: light --default, dark --prefersdark, night, nord;
+}
 @plugin "@tailwindcss/typography";
 
 /*
@@ -25,6 +25,25 @@
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      circle at 12% 18%,
+      color-mix(in oklab, var(--color-primary) 28%, transparent),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 88% 72%,
+      color-mix(in oklab, var(--color-accent) 22%, transparent),
+      transparent 46%
+    );
 }
 
 

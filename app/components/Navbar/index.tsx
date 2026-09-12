@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import {
   PiBrainDuotone,
   PiCodeBlockDuotone,
@@ -15,34 +15,44 @@ import {
 
 import { NAME } from "../../data/basic";
 import { themes } from "../../data/themes";
-import { getTheme, setTheme as setGlobalTheme } from "../../utils/cookie";
+import { setTheme as setGlobalTheme } from "../../utils/cookie";
+
+const navItems = [
+  { name: "Home", section: "intro", icon: <PiHouseDuotone size={18} /> },
+  { name: "Skills", section: "skills", icon: <PiBrainDuotone size={18} /> },
+  {
+    name: "Projects",
+    section: "projects",
+    icon: <PiCodeBlockDuotone size={18} />,
+  },
+  {
+    name: "Experience",
+    section: "experience",
+    icon: <PiLightbulbDuotone size={18} />,
+  },
+  {
+    name: "Contact",
+    section: "contact",
+    icon: <PiEnvelopeDuotone size={18} />,
+  },
+  { name: "Blogs", section: "blogs", icon: <PiQuotesDuotone size={18} /> },
+];
+
+const subscribeTheme = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  return () => observer.disconnect();
+};
+
+const readTheme = () =>
+  document.documentElement.getAttribute("data-theme") || "light";
 
 const Navbar = () => {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-
-  const [theme, setTheme] = useState(getTheme(isClient));
-
-  const navItems = [
-    { name: "Home", section: "intro", icon: <PiHouseDuotone size={18} /> },
-    { name: "Skills", section: "skills", icon: <PiBrainDuotone size={18} /> },
-    {
-      name: "Projects",
-      section: "projects",
-      icon: <PiCodeBlockDuotone size={18} />,
-    },
-    {
-      name: "Experience",
-      section: "experience",
-      icon: <PiLightbulbDuotone size={18} />,
-    },
-    {
-      name: "Contact",
-      section: "contact",
-      icon: <PiEnvelopeDuotone size={18} />,
-    },
-    { name: "Blogs", section: "blogs", icon: <PiQuotesDuotone size={18} /> },
-  ];
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "light");
 
   const scrollToSection = (section: string) => {
     const element = document.getElementById(section);
@@ -68,24 +78,16 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    setIsClient(true);
     const hash = window.location.hash.replace("#", "");
     if (hash && window.location.pathname === "/") {
       scrollToSection(hash);
     }
   }, []);
 
-  useEffect(() => {
-    setTheme(getTheme(isClient));
-    if (!isClient) return;
-    setGlobalTheme(getTheme(isClient));
-  }, [isClient]);
-
   return (
     <div className="drawer sticky top-0 z-50">
       <input id="navbar-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        {/* Navbar */}
         <div className="navbar bg-base-300/80 backdrop-blur-md w-full">
           <div className="flex-none lg:hidden">
             <label
@@ -108,7 +110,6 @@ const Navbar = () => {
               {navItems.map((item) => (
                 <li key={item.name}>
                   <a
-                    key={item.name}
                     onClick={() => handleNavbarNavigation(item.section)}
                     className="font-bold normal-case flex items-center cursor-pointer"
                   >
@@ -120,7 +121,6 @@ const Navbar = () => {
             </ul>
           </div>
 
-          {/* Theme Toggle */}
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
@@ -128,24 +128,15 @@ const Navbar = () => {
               className="btn btn-ghost rounded-btn"
             >
               <PiPaletteDuotone size={18} />
-              {theme
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}
+              {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </div>
             <ul
               tabIndex={0}
-              className="menu dropdown-content bg-base-200 rounded-box mt-4 w-96 overflow-y-auto p-2 shadow-sm z-50"
-              style={{ maxHeight: "calc(100vh - 10rem)" }}
+              className="menu dropdown-content bg-base-200 rounded-box mt-4 w-44 p-2 shadow-sm z-50"
             >
               {themes.map((t) => (
                 <li key={t}>
-                  <a
-                    onClick={() => {
-                      setTheme(t);
-                      setGlobalTheme(t);
-                    }}
-                  >
+                  <a onClick={() => setGlobalTheme(t)}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </a>
                 </li>
@@ -154,7 +145,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* Drawer */}
       <div className="drawer-side">
         <label
           htmlFor="navbar-drawer"
@@ -165,7 +155,6 @@ const Navbar = () => {
           {navItems.map((item) => (
             <li key={item.name}>
               <a
-                key={item.name}
                 onClick={() => handleNavbarNavigation(item.section)}
                 className="btn btn-ghost normal-case flex items-center justify-start"
               >

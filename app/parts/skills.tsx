@@ -1,6 +1,5 @@
 "use client";
 
-import useGradientArtifacts from "../components/GradientCreator/gradient";
 import TagSphere from "../components/TagSphere/TagSphere";
 import { tagSphereProps } from "../components/TagSphere/types";
 import Title from "../components/Title";
@@ -8,11 +7,6 @@ import { COMPANY, NAME, POSITION } from "../data/basic";
 import { allSkills } from "../data/skills";
 
 const SkillTree = () => {
-  const gradients = useGradientArtifacts({
-    heightMultiplier: 2,
-    maxGradients: 3,
-  });
-
   const defaultStateTagSphere: tagSphereProps = {
     skills: ["python", "java", "go", "rust", "postgresql"],
     maxSpeed: 4,
@@ -26,7 +20,6 @@ const SkillTree = () => {
 
   return (
     <div id="skills" className="py-8">
-      {gradients}
       <div className="flex flex-col lg:flex-row lg:justify-between lg:gap-16">
         <div className="w-full lg:w-2/3 space-y-4 text-sm md:text-base lg:text-lg">
           <Title title="About Me" />

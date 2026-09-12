@@ -16,18 +16,16 @@ const ExperienceItem = ({
     <p className="text-sm text-base-content/60">
       {exp.startDate} - {exp.endDate}
     </p>
-    {!compact && (
-      <>
-        <p className="mt-2 text-pretty text-justify">{exp.description}</p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {exp.techStack.map((tech) => (
-            <span key={tech} className="badge badge-ghost badge-sm p-2">
-              {tech}
-            </span>
-          ))}
-        </div>
-      </>
-    )}
+    <p className="mt-2 text-pretty text-justify text-sm md:text-base">
+      {exp.description}
+    </p>
+    <div className="flex flex-wrap gap-2 mt-3">
+      {exp.techStack.map((tech) => (
+        <span key={tech} className="badge badge-ghost badge-sm p-2">
+          {tech}
+        </span>
+      ))}
+    </div>
   </div>
 );
 

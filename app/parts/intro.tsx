@@ -9,7 +9,6 @@ import {
 } from "react-icons/pi";
 
 import GlowingCircles from "../components/GlowingCircles/circles";
-import useGradientArtifacts from "../components/GradientCreator/gradient";
 import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, POSITION, TWITTER } from "../data/basic";
 
 const socials = [
@@ -20,10 +19,8 @@ const socials = [
 ];
 
 export default function Introduction() {
-  const gradients = useGradientArtifacts();
   return (
     <div id="intro" className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-16">
-      {gradients}
       <div className="hidden lg:block">
         <GlowingCircles maxRadius={712} position={30} />
       </div>

@@ -1,4 +1,6 @@
-const HOST_LINK = "https://portfolio-pranavs-projects-1ca3ecef.vercel.app";
+import { SITE_URL } from "./basic";
+
+const HOST_LINK = SITE_URL;
 
 const projects = [
   {

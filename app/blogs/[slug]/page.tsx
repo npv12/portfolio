@@ -1,6 +1,7 @@
 import { NextjsParams } from "@/app/types/blogs";
 import parse, { DOMNode, Element, Text, domToReact } from "html-react-parser";
 import { marked } from "marked";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import Mermaid from "../../components/Mermaid";
@@ -81,6 +82,22 @@ const BlogCard = ({
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
   return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: NextjsParams): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const { frontmatter, content } = await getBlogContent(slug);
+    return {
+      title: frontmatter.title,
+      description:
+        frontmatter.description || content.slice(0, 160).replace(/\s+/g, " "),
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function Page({ params }: NextjsParams) {

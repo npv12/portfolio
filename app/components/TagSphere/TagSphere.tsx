@@ -1,10 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import { createRef, useEffect, useRef, useState } from "react";
 
-import { createItem, fetchIconFromText, updateItemPosition } from "./helper";
+import { createItem, SphereItem, updateItemPosition } from "./helper";
 import { defaultStyles, tagSphereProps } from "./types";
+
+const buildItems = (skills: string[], size: number): SphereItem[] =>
+  skills.map((skill, index) =>
+    createItem(
+      <span className="text-sm font-semibold whitespace-nowrap">{skill}</span>,
+      index,
+      skills.length,
+      size,
+      createRef<HTMLSpanElement>()
+    )
+  );
 
 export default function TagSphere(props: tagSphereProps) {
   const {
@@ -19,94 +29,57 @@ export default function TagSphere(props: tagSphereProps) {
     useContainerInlineStyles,
   }: tagSphereProps = props;
 
-  let radius = props.radius;
-
-  if (!radius) {
-    radius = skills.length * 10;
-  }
-
+  const radius = props.radius ?? skills.length * 10;
   const depth = 2 * radius;
   const size = 1.5 * radius;
-  const itemHooks = skills.map(() => createRef());
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [items, setItems]: [any[], any] = useState([]);
 
-  useEffect(() => {
-    setItems(() =>
-      skills.map((skill, index) => {
-        const skillImg = (
-          <Image
-            width={50}
-            height={50}
-            src={fetchIconFromText(skill)}
-            alt={"Random image"}
-          />
-        );
-        return createItem(
-          skillImg,
-          index,
-          skills.length,
-          size,
-          itemHooks[index] as React.RefObject<HTMLSpanElement>
-        );
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skills]);
-
-  const containerRef = useRef(null);
+  const [items, setItems] = useState<SphereItem[]>(() =>
+    buildItems(skills, size)
+  );
   const [firstRender, setFirstRender] = useState(true);
   const [lessSpeed, setLessSpeed] = useState(maxSpeed);
   const [active, setActive] = useState(false);
-  const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
+  const [mouseX, setMouseX] = useState(
+    () => initialSpeed * Math.sin(initialDirection * (Math.PI / 180))
+  );
+  const [mouseY, setMouseY] = useState(
+    () => -initialSpeed * Math.cos(initialDirection * (Math.PI / 180))
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return false;
-
-    const rect = (
-      containerRef.current as HTMLDivElement
-    ).getBoundingClientRect();
-
-    setMouseX(() => (e.clientX - (rect.left + rect.width / 2)) / 5);
-    setMouseY(() => (e.clientY - (rect.top + rect.height / 2)) / 5);
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMouseX((e.clientX - (rect.left + rect.width / 2)) / 5);
+    setMouseY((e.clientY - (rect.top + rect.height / 2)) / 5);
   };
 
   const checkTouchCoordinates = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!containerRef.current) return false;
-
-    const rect = (
-      containerRef.current as HTMLDivElement
-    ).getBoundingClientRect();
+    const rect = containerRef.current.getBoundingClientRect();
     const touchX = e.targetTouches[0].clientX;
     const touchY = e.targetTouches[0].clientY;
-
-    if (
+    return (
       touchX > rect.left &&
       touchX < rect.right &&
       touchY < rect.bottom &&
       touchY > rect.top
-    ) {
-      return true;
-    }
-
-    return false;
+    );
   };
-  const next = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setItems((items: any) => {
-      if (lessSpeed == 0) return items;
 
-      let a, b;
+  const next = () => {
+    setItems((current) => {
+      if (lessSpeed == 0) return current;
+
+      let a: number;
+      let b: number;
       if (!keepRollingAfterMouseOut && !active && !firstRender) {
         setLessSpeed((lessSpeedCurrent) => {
           const lessConstant = lessSpeed * (maxSpeed / 200);
-
           return lessSpeedCurrent - lessConstant > 0.01
             ? lessSpeedCurrent - lessConstant
             : 0;
         });
-
         a = -(Math.min(Math.max(-mouseY, -size), size) / radius) * lessSpeed;
         b = (Math.min(Math.max(-mouseX, -size), size) / radius) * lessSpeed;
       } else if (!active && !firstRender && keepRollingAfterMouseOut) {
@@ -121,9 +94,8 @@ export default function TagSphere(props: tagSphereProps) {
         b = (Math.min(Math.max(-mouseX, -size), size) / radius) * maxSpeed;
       }
 
-      if (Math.abs(a) <= 0.01 && Math.abs(b) <= 0.01) return items; // pause
+      if (Math.abs(a) <= 0.01 && Math.abs(b) <= 0.01) return current;
 
-      // calculate offset
       const l = Math.PI / 180;
       const sc = [
         Math.sin(a * l),
@@ -132,30 +104,9 @@ export default function TagSphere(props: tagSphereProps) {
         Math.cos(b * l),
       ];
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return items.map((item: any) => updateItemPosition(item, sc, depth));
+      return current.map((item) => updateItemPosition(item, sc, depth));
     });
   };
-
-  const init = () => {
-    setActive(false);
-    const mouseX0 = initialSpeed * Math.sin(initialDirection * (Math.PI / 180));
-    const mouseY0 =
-      -initialSpeed * Math.cos(initialDirection * (Math.PI / 180));
-
-    setMouseX(() => mouseX0);
-    setMouseY(() => mouseY0);
-
-    next();
-  };
-
-  useEffect(() => {
-    init();
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setItems((items: any) => [...items]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const animationFrame = requestAnimationFrame(next);
@@ -168,18 +119,18 @@ export default function TagSphere(props: tagSphereProps) {
       className={props.className}
       ref={containerRef}
       onMouseOver={() => {
-        setActive(() => true);
-        setFirstRender(() => false);
-        setLessSpeed(() => maxSpeed);
+        setActive(true);
+        setFirstRender(false);
+        setLessSpeed(maxSpeed);
       }}
       onMouseOut={() => {
-        setActive(() => false);
+        setActive(false);
       }}
       onMouseMove={handleMouseMove}
       onTouchStart={() => {
         setActive(true);
-        setLessSpeed(() => maxSpeed);
-        setFirstRender(() => false);
+        setLessSpeed(maxSpeed);
+        setFirstRender(false);
       }}
       onTouchMove={(e: React.TouchEvent<HTMLDivElement>) => {
         if (checkTouchCoordinates(e)) {

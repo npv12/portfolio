@@ -23,4 +23,5 @@ export type FrontMatter = {
   author: string;
   tags: string[];
   date: string;
+  description: string;
 };
