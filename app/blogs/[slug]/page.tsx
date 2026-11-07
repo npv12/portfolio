@@ -12,12 +12,13 @@ import { notFound } from "next/navigation";
 import { PiArrowLeftBold, PiArrowRightBold } from "react-icons/pi";
 
 import CopyCode from "../../components/Article/CopyCode";
+import JsonLd from "../../components/JsonLd";
 import ReadingProgress from "../../components/Article/ReadingProgress";
 import Toc from "../../components/Article/Toc";
 import Mermaid from "../../components/Mermaid";
 import Navbar from "../../components/Navbar";
 import { formatDate } from "../../components/PostRow";
-import { NAME } from "../../data/basic";
+import { NAME, SITE_URL, TWITTER_HANDLE } from "../../data/basic";
 import GetInTouch from "../../parts/getInTouch";
 import { BlogPost } from "../../types/blogs";
 import {
@@ -102,15 +103,30 @@ export async function generateMetadata({
     const { frontmatter, content } = await getBlogContent(slug);
     const description =
       frontmatter.description || content.slice(0, 160).replace(/\s+/g, " ");
+    const url = `/blogs/${slug}`;
+    const author = frontmatter.author || NAME;
     return {
       title: frontmatter.title,
       description,
+      authors: [{ name: author, url: SITE_URL }],
+      keywords: frontmatter.tags,
+      alternates: { canonical: url, types: { "application/rss+xml": "/feed.xml" } },
       openGraph: {
         title: frontmatter.title,
         description,
+        url,
+        siteName: NAME,
+        locale: "en_US",
         type: "article",
         publishedTime: frontmatter.date,
+        authors: [SITE_URL],
         tags: frontmatter.tags,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: frontmatter.title,
+        description,
+        creator: TWITTER_HANDLE,
       },
     };
   } catch {
@@ -139,8 +155,42 @@ export default async function Page({ params }: NextjsParams) {
     (post) => post.slug !== newer?.slug && post.slug !== older?.slug
   );
 
+  const postUrl = `${SITE_URL}/blogs/${slug}`;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: frontmatter.title,
+    description: frontmatter.description,
+    datePublished: frontmatter.date,
+    dateModified: frontmatter.date,
+    url: postUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+    image: `${postUrl}/opengraph-image`,
+    keywords: frontmatter.tags.join(", "),
+    wordCount: content.split(/\s+/).filter(Boolean).length,
+    inLanguage: "en",
+    author: {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: frontmatter.author || NAME,
+      url: SITE_URL,
+    },
+    publisher: { "@type": "Person", "@id": `${SITE_URL}/#person`, name: NAME },
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Writing", item: `${SITE_URL}/blogs` },
+      { "@type": "ListItem", position: 3, name: frontmatter.title, item: postUrl },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Navbar />
       <ReadingProgress target="post-body" />
       <main id="main" className="shell">

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 
 import Backdrop from "./components/Backdrop";
-import { SITE_URL } from "./data/basic";
+import { NAME, SITE_URL, TWITTER_HANDLE } from "./data/basic";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -31,17 +31,41 @@ export const metadata: Metadata = {
     template: "%s | Pranav Nedungadi",
   },
   description,
+  applicationName: NAME,
+  authors: [{ name: NAME, url: SITE_URL }],
+  creator: NAME,
+  keywords: [
+    NAME,
+    "backend engineer",
+    "Python",
+    "Go",
+    "PostgreSQL",
+    "Kubernetes",
+    "distributed systems",
+    "agent systems",
+  ],
+  alternates: {
+    canonical: "/",
+    types: { "application/rss+xml": [{ url: "/feed.xml", title: `${NAME}: Writing` }] },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
   openGraph: {
-    title: "Pranav Nedungadi",
+    title: NAME,
     description,
-    url: SITE_URL,
-    siteName: "Pranav Nedungadi",
-    type: "website",
+    url: "/",
+    siteName: NAME,
+    locale: "en_US",
+    type: "profile",
   },
   twitter: {
-    card: "summary",
-    title: "Pranav Nedungadi",
+    card: "summary_large_image",
+    title: NAME,
     description,
+    creator: TWITTER_HANDLE,
   },
 };
 

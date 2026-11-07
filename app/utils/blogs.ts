@@ -63,7 +63,9 @@ export async function getBlogContent(
   const fullPath = path.join(process.cwd(), "public/blogs", `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
 
-  const { data, content } = matter(fileContents);
+  const { data, content: raw } = matter(fileContents);
+  // The page renders the title as its own <h1>; drop a duplicate leading one.
+  const content = raw.replace(/^\s*# [^\n]*\n+/, "");
 
   return {
     content,

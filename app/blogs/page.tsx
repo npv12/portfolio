@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
 
 import Navbar from "../components/Navbar";
+import { NAME } from "../data/basic";
 import PostRow from "../components/PostRow";
 import GetInTouch from "../parts/getInTouch";
 import { BlogPost } from "../types/blogs";
 import { getBlogPosts } from "../utils/blogs";
 
+const description =
+  "Notes on backend engineering: SQL, distributed systems, cloud infrastructure, and agent runtimes.";
+
 export const metadata: Metadata = {
   title: "Writing",
-  description:
-    "Notes on backend engineering: SQL, distributed systems, cloud infrastructure, and agent runtimes.",
+  description,
+  alternates: { canonical: "/blogs", types: { "application/rss+xml": "/feed.xml" } },
+  openGraph: {
+    title: `Writing | ${NAME}`,
+    description,
+    url: "/blogs",
+    siteName: NAME,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Writing | ${NAME}`,
+    description,
+  },
 };
 
 const groupByYear = (posts: BlogPost[]) => {
