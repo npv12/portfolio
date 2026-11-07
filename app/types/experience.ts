@@ -4,6 +4,8 @@ interface Experience {
   startDate: string;
   endDate: string;
   description: string;
+  focus: string;
+  highlights: string[];
   techStack: string[];
 }
 

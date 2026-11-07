@@ -1,82 +1,92 @@
 import { NextjsParams } from "@/app/types/blogs";
-import parse, { DOMNode, Element, Text, domToReact } from "html-react-parser";
-import { marked } from "marked";
+import parse, {
+  DOMNode,
+  Element,
+  HTMLReactParserOptions,
+  Text,
+  domToReact,
+} from "html-react-parser";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PiArrowLeftBold, PiArrowRightBold } from "react-icons/pi";
 
+import CopyCode from "../../components/Article/CopyCode";
+import ReadingProgress from "../../components/Article/ReadingProgress";
+import Toc from "../../components/Article/Toc";
 import Mermaid from "../../components/Mermaid";
 import Navbar from "../../components/Navbar";
-import { calculateReadingTime, getBlogContent, getBlogPosts } from "../../utils/blogs";
+import { formatDate } from "../../components/PostRow";
+import { NAME } from "../../data/basic";
+import GetInTouch from "../../parts/getInTouch";
+import { BlogPost } from "../../types/blogs";
+import {
+  calculateReadingTime,
+  getBlogContent,
+  getBlogPosts,
+} from "../../utils/blogs";
+import { renderMarkdown } from "../../utils/markdown";
 
-const parseOptions = {
+const textOf = (node: Element): string =>
+  node.children
+    .map((child) =>
+      child instanceof Text ? child.data : child instanceof Element ? textOf(child) : ""
+    )
+    .join("");
+
+const parseOptions: HTMLReactParserOptions = {
   replace: (domNode: DOMNode) => {
-    if (domNode instanceof Element && domNode.tagName === "pre") {
-      const codeElement = domNode.children[0] as Element;
+    if (!(domNode instanceof Element)) return;
+
+    if (domNode.tagName === "pre") {
+      const code = domNode.children[0];
       if (
-        codeElement &&
-        codeElement.tagName === "code" &&
-        codeElement.attribs.class === "language-mermaid"
+        code instanceof Element &&
+        code.tagName === "code" &&
+        code.attribs.class === "language-mermaid"
       ) {
-        const code = codeElement.children[0];
-        if (code instanceof Text && code.data)
-          return <Mermaid graph={code.data} />;
+        return <Mermaid graph={textOf(code)} />;
       }
     }
-    if (domNode instanceof Element) return domToReact([domNode]);
-    return null;
+
+    if (domNode.tagName === "figure" && domNode.attribs.class === "code-block") {
+      return (
+        <figure className="code-block not-prose">
+          <figcaption className="code-block__bar mono">
+            <span>{domNode.attribs["data-lang"]}</span>
+            <CopyCode />
+          </figcaption>
+          {domToReact(domNode.children as DOMNode[], parseOptions)}
+        </figure>
+      );
+    }
+
+    if (domNode.tagName === "table") {
+      return (
+        <div className="table-scroll" tabIndex={0}>
+          <table>{domToReact(domNode.children as DOMNode[], parseOptions)}</table>
+        </div>
+      );
+    }
   },
 };
 
-const BlogContent = async ({ content }: { content: string }) => {
-  const parsedContent = await marked.parse(content);
-  return (
-    <div className="prose mx-auto lg:prose-lg max-w-none">
-      {parse(parsedContent, parseOptions)}
-    </div>
-  );
-};
+const initials = NAME.split(" ")
+  .map((part) => part[0])
+  .join("");
 
-const BlogCard = ({
-  title,
-  date,
-  readingTime,
-  tags,
-  author,
-}: {
-  title: string;
-  date: string;
-  readingTime: string;
-  tags: string[];
-  author: string;
-}) => {
-  return (
-    <aside className="card bg-base-200 shadow-xl p-6 sticky top-24 h-fit w-72">
-      <h2 className="card-title text-lg mb-4">{title}</h2>
-      <div className="text-base-content/70 text-sm space-y-2">
-        <p>
-          <span className="font-medium">Published </span>
-          {new Date(date).toLocaleDateString()}
-        </p>
-        <p>
-          <span className="font-medium">Reading time </span>
-          {readingTime}
-        </p>
-        <p>
-          <span className="font-medium">Author </span>
-          {author}
-        </p>
-      </div>
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-4">
-          {tags.map((tag: string) => (
-            <span key={tag} className="badge badge-ghost">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-    </aside>
-  );
+const relatedPosts = (posts: BlogPost[], slug: string, tags: string[]) => {
+  const wanted = new Set(tags.map((tag) => tag.toLowerCase()));
+  return posts
+    .filter((post) => post.slug !== slug)
+    .map((post) => ({
+      post,
+      score: post.tags.filter((tag) => wanted.has(tag.toLowerCase())).length,
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(({ post }) => post);
 };
 
 export async function generateStaticParams() {
@@ -90,10 +100,18 @@ export async function generateMetadata({
   const { slug } = await params;
   try {
     const { frontmatter, content } = await getBlogContent(slug);
+    const description =
+      frontmatter.description || content.slice(0, 160).replace(/\s+/g, " ");
     return {
       title: frontmatter.title,
-      description:
-        frontmatter.description || content.slice(0, 160).replace(/\s+/g, " "),
+      description,
+      openGraph: {
+        title: frontmatter.title,
+        description,
+        type: "article",
+        publishedTime: frontmatter.date,
+        tags: frontmatter.tags,
+      },
     };
   } catch {
     return {};
@@ -110,23 +128,127 @@ export default async function Page({ params }: NextjsParams) {
     notFound();
   }
 
+  const [{ html, toc }, posts] = await Promise.all([
+    renderMarkdown(content),
+    getBlogPosts(),
+  ]);
+  const index = posts.findIndex((post) => post.slug === slug);
+  const newer = index > 0 ? posts[index - 1] : null;
+  const older = index >= 0 && index < posts.length - 1 ? posts[index + 1] : null;
+  const related = relatedPosts(posts, slug, frontmatter.tags).filter(
+    (post) => post.slug !== newer?.slug && post.slug !== older?.slug
+  );
+
   return (
-    <div>
+    <>
       <Navbar />
-      <div className="mt-2 p-4 md:p-8 flex gap-8 max-w-6xl mx-auto">
-        <div className="grow min-w-0">
-          <BlogContent content={content} />
-        </div>
-        <div className="hidden lg:block shrink-0">
-          <BlogCard
-            title={frontmatter.title}
-            date={frontmatter.date}
-            readingTime={calculateReadingTime(content)}
-            tags={frontmatter.tags}
-            author={frontmatter.author}
-          />
-        </div>
-      </div>
-    </div>
+      <ReadingProgress target="post-body" />
+      <main id="main" className="shell">
+        <article className="post">
+          <header className="post__head">
+            <Link href="/blogs" className="back-link">
+              <PiArrowLeftBold aria-hidden="true" /> All writing
+            </Link>
+            {frontmatter.tags.length > 0 && (
+              <p className="post__kicker mono">
+                {frontmatter.tags.slice(0, 3).join(" / ")}
+              </p>
+            )}
+            <h1 className="post__title">{frontmatter.title}</h1>
+            {frontmatter.description && (
+              <p className="post__lede">{frontmatter.description}</p>
+            )}
+            <div className="post__byline">
+              <span className="post__avatar mono" aria-hidden="true">
+                {initials}
+              </span>
+              <span>
+                <span className="post__author">
+                  {frontmatter.author || NAME}
+                </span>
+                <span className="post__meta mono">
+                  <time dateTime={frontmatter.date}>
+                    {formatDate(frontmatter.date, "long")}
+                  </time>
+                  <span aria-hidden="true"> · </span>
+                  {calculateReadingTime(content)}
+                </span>
+              </span>
+            </div>
+          </header>
+
+          <div className="post__layout">
+            <aside className="post__aside">
+              <Toc items={toc} />
+            </aside>
+            <div id="post-body" className="post__body prose">
+              {parse(html, parseOptions)}
+            </div>
+          </div>
+
+          <footer className="post__foot">
+            {frontmatter.tags.length > 0 && (
+              <ul className="stack" aria-label="Tags">
+                {frontmatter.tags.map((tag: string) => (
+                  <li key={tag} className="tag">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <nav className="post-nav" aria-label="More posts">
+              {older ? (
+                <Link href={`/blogs/${older.slug}`} className="post-nav__link">
+                  <span className="mono">
+                    <PiArrowLeftBold aria-hidden="true" /> Previous
+                  </span>
+                  <span className="post-nav__title">{older.title}</span>
+                </Link>
+              ) : (
+                <span />
+              )}
+              {newer && (
+                <Link
+                  href={`/blogs/${newer.slug}`}
+                  className="post-nav__link post-nav__link--next"
+                >
+                  <span className="mono">
+                    Next <PiArrowRightBold aria-hidden="true" />
+                  </span>
+                  <span className="post-nav__title">{newer.title}</span>
+                </Link>
+              )}
+            </nav>
+
+            {related.length > 0 && (
+              <section className="related" aria-labelledby="related-heading">
+                <h2 id="related-heading" className="section__index mono">
+                  <b>Related</b> on similar topics
+                </h2>
+                <div className="related__grid">
+                  {related.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={`/blogs/${post.slug}`}
+                      className="related__card"
+                    >
+                      <span className="mono related__tags">
+                        {post.tags.slice(0, 2).join(" / ")}
+                      </span>
+                      <span className="related__title">{post.title}</span>
+                      <span className="mono related__time">
+                        {post.readingTime}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+          </footer>
+        </article>
+      </main>
+      <GetInTouch />
+    </>
   );
 }

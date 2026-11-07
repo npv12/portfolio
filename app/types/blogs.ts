@@ -4,6 +4,7 @@ export type BlogPost = {
   slug: string;
   readingTime: string;
   description: string;
+  tags: string[];
 };
 
 export type BlogConfig = {

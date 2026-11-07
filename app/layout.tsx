@@ -1,11 +1,28 @@
-import type { Metadata } from "next";
-import { Space_Grotesk as Jost } from "next/font/google";
-import Script from "next/script";
+import type { Metadata, Viewport } from "next";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 
+import Backdrop from "./components/Backdrop";
 import { SITE_URL } from "./data/basic";
 import "./globals.css";
 
-const inter = Jost({ subsets: ["latin"] });
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+const sans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+const mono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+const description =
+  "Backend engineer working in Python and Go. APIs, PostgreSQL, cloud infrastructure, and multi-tenant agent systems at Simbian.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -13,12 +30,10 @@ export const metadata: Metadata = {
     default: "Pranav Nedungadi",
     template: "%s | Pranav Nedungadi",
   },
-  description:
-    "Software developer at Simbian. Backend, SOC automation, and agentic systems.",
+  description,
   openGraph: {
     title: "Pranav Nedungadi",
-    description:
-      "Software developer at Simbian. Backend, SOC automation, and agentic systems.",
+    description,
     url: SITE_URL,
     siteName: "Pranav Nedungadi",
     type: "website",
@@ -26,12 +41,23 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Pranav Nedungadi",
-    description:
-      "Software developer at Simbian. Backend, SOC automation, and agentic systems.",
+    description,
   },
 };
 
-const themeScript = `document.documentElement.setAttribute("data-theme",(document.cookie.match(/(?:^|; )theme=([^;]*)/)||[])[1]||"light");`;
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#16130f" },
+  ],
+};
+
+// Only an explicit light/dark choice is applied; anything else (including
+// legacy daisyUI theme names) falls back to the system preference.
+const themeScript = `(function(){var m=document.cookie.match(/(?:^|; )theme=([^;]*)/);var t=m&&m[1];if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);})();`;
 
 export default function RootLayout({
   children,
@@ -39,13 +65,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <Script
-          id="theme"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeScript }}
-        />
+    <html
+      lang="en"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body>
+        <Backdrop />
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

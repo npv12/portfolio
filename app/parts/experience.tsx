@@ -1,78 +1,54 @@
-import Title from "../components/Title";
+import SectionHead from "../components/SectionHead";
 import Experiences from "../data/experience";
 
-const ExperienceItem = ({
-  exp,
-  compact,
-}: {
-  exp: (typeof Experiences)[number];
-  compact?: boolean;
-}) => (
-  <div className={compact ? "p-4 max-w-xs" : "p-4 max-w-md"}>
-    <h2 className="text-xl font-bold">{exp.company}</h2>
-    <div className="badge badge-secondary text-secondary-content my-2 badge-md p-3">
-      {exp.position}
-    </div>
-    <p className="text-sm text-base-content/60">
-      {exp.startDate} - {exp.endDate}
-    </p>
-    <p className="mt-2 text-pretty text-justify text-sm md:text-base">
-      {exp.description}
-    </p>
-    <div className="flex flex-wrap gap-2 mt-3">
-      {exp.techStack.map((tech) => (
-        <span key={tech} className="badge badge-ghost badge-sm p-2">
-          {tech}
-        </span>
-      ))}
-    </div>
-  </div>
-);
-
-const Timeline = ({ compact }: { compact?: boolean }) => (
-  <ul
-    className={`timeline timeline-vertical ${compact ? "timeline-compact mt-12" : ""}`}
-  >
-    {Experiences.map((exp, index) => (
-      <li key={exp.company}>
-        {index > 0 && <hr />}
-        <div
-          className={`timeline-${index % 2 === 0 ? "start" : "end"} timeline-box bg-neutral text-neutral-content`}
-        >
-          <ExperienceItem exp={exp} compact={compact} />
-        </div>
-        <div className="timeline-middle">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="h-5 w-5"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-        {index < Experiences.length - 1 && <hr />}
-      </li>
-    ))}
-  </ul>
-);
-
-const Experience = () => {
+export default function Experience() {
   return (
-    <div className="px-4 py-16" id="experience">
-      <Title title="Experience" />
-      <div className="hidden md:block">
-        <Timeline />
+    <section className="section" id="work" aria-labelledby="work-heading">
+      <div className="shell">
+        <SectionHead
+          index="01"
+          label="Work"
+          id="work-heading"
+          title="The systems behind the work."
+        >
+          Four teams since 2021: from founding engineer on an assessment
+          product to cloud platforms and multi-tenant agent infrastructure.
+        </SectionHead>
+        <div className="timeline">
+          {Experiences.map((exp) => {
+            const current = exp.endDate === "Present";
+            return (
+              <article key={exp.company} className="job">
+                <div className="job__meta">
+                  <p className="job__period mono">
+                    {exp.startDate} – {exp.endDate}
+                  </p>
+                  <h3 className="job__company">{exp.company}</h3>
+                  <p className="job__role">{exp.position}</p>
+                  {current && (
+                    <span className="job__now tag tag--signal">Current</span>
+                  )}
+                </div>
+                <div>
+                  <h4 className="job__focus">{exp.focus}</h4>
+                  <ul className="ticks">
+                    {exp.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
+                    ))}
+                  </ul>
+                  <ul className="stack" aria-label="Technologies">
+                    {exp.techStack.map((tech) => (
+                      <li key={tech} className="tag">
+                        {tech}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
-      <div className="md:hidden">
-        <Timeline compact />
-      </div>
-    </div>
+    </section>
   );
-};
-
-export default Experience;
+}

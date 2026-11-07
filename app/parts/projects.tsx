@@ -1,52 +1,37 @@
-"use client";
-
-import { useState } from "react";
-
-import ProjectCard from "../components/ProjectCard/ProjectCard";
-import Title from "../components/Title";
+import SectionHead from "../components/SectionHead";
+import ProjectRow, { FeaturedProject } from "../components/ProjectCard/ProjectCard";
 import projects from "../data/projects";
-import { Project } from "../types/projects";
 
-const Projects = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const projectsPerPage = 6;
-  const totalPages = Math.ceil(projects.length / projectsPerPage);
-  const start = currentPage * projectsPerPage;
-  const projectsList: Project[] = projects.slice(
-    start,
-    start + projectsPerPage
-  );
+export default function Projects() {
+  const [featured, ...rest] = projects;
 
   return (
-    <div id="projects" className="py-16">
-      <Title title="Projects" />
-      <div className="container mx-auto mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 mb-6">
-          {projectsList.map((project) => (
-            <div key={project.title} className="h-full">
-              <ProjectCard project={project} />
-            </div>
+    <section
+      id="projects"
+      className="section"
+      aria-labelledby="projects-heading"
+    >
+      <div className="shell">
+        <SectionHead
+          index="02"
+          label="Projects"
+          id="projects-heading"
+          title="APIs, platforms, and the plumbing."
+        >
+          Personal builds and systems I worked on at Simbian, Dream11, and Blaze
+          AI. Professional projects are described without private source code.
+        </SectionHead>
+        <FeaturedProject project={featured} />
+        <div className="project-list">
+          {rest.map((project, index) => (
+            <ProjectRow
+              key={project.title}
+              project={project}
+              index={index + 2}
+            />
           ))}
         </div>
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i)}
-                className={`btn btn-circle ${
-                  currentPage === i ? "btn-primary" : "btn-outline"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Projects;
+}

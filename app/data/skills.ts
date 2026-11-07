@@ -51,3 +51,32 @@ export const allSkills: Skill[] = [
   { name: "Kafka", Icon: SiApachekafka },
   { name: "Linux", Icon: SiLinux },
 ];
+
+export const skillGroups = [
+  {
+    title: "Services & APIs",
+    skills: allSkills.filter(({ name }) =>
+      ["Python", "Go", "Django", "FastAPI"].includes(name)
+    ),
+  },
+  {
+    title: "Data & messaging",
+    skills: allSkills.filter(({ name }) =>
+      ["PostgreSQL", "Redis", "Kafka"].includes(name)
+    ),
+  },
+  {
+    title: "Cloud & infrastructure",
+    skills: allSkills.filter(({ name }) =>
+      ["Kubernetes", "Docker", "Terraform", "AWS", "GCP", "Linux"].includes(
+        name
+      )
+    ),
+  },
+  {
+    title: "When the product needs it",
+    skills: allSkills.filter(({ name }) =>
+      ["TypeScript", "React", "Next.js", "Java", "Rust"].includes(name)
+    ),
+  },
+];

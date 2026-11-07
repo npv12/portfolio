@@ -1,5 +1,6 @@
 export const NAME = "Pranav Nedungadi";
 export const POSITION = "Software Developer";
+export const SPECIALTY = "Backend engineer";
 export const COMPANY = "Simbian";
 export const SITE_URL = "https://pnpv12.web.app";
 

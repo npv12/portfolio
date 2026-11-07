@@ -1,53 +1,85 @@
-import { SITE_URL } from "./basic";
+import { Project } from "../types/projects";
 
-const HOST_LINK = SITE_URL;
-
-const projects = [
+const projects: Project[] = [
   {
-    "title": "Neurospend",
-    "description": "NeuroSpend is a modern, full-stack expense management platform built for Indian users. It features automated bank statement parsing for major Indian banks (Axis, SBI, HDFC), AI-powered smart categorization, and advanced analytics. The stack includes Go (Gin), Next.js 15, TypeScript, and PostgreSQL, with secure JWT authentication, real-time updates via React Query, robust error handling, and complete type safety. NeuroSpend supports responsive design, offline usage, and comprehensive testing, providing a scalable, maintainable, and developer-friendly solution for intelligent expense tracking and insights.",
+    title: "NeuroSpend",
+    category: "Personal project / Finance",
+    focus: "Turning bank statements into useful financial data.",
+    description:
+      "An expense-management platform for Indian bank statements. The backend handles ingestion, categorization, household-level analytics, and the distinction between spending, transfers, and investments.",
+    highlights: [
+      "Go API built with Gin and pgx, backed by PostgreSQL and versioned Goose migrations.",
+      "Statement parsing for Axis, SBI, and HDFC, with AI-assisted transaction categorization.",
+      "Shared analytics queries for category allocation, spending trends, cash flow, and investments.",
+    ],
     githubLink: "https://github.com/trainjumpers/neurospend",
     liveLink: "https://neurospend.vercel.app",
-    tags: ["Go", "Next.js", "TypeScript", "expense management"],
+    blogLink: "/blogs/additive-financial-analytics",
+    tags: ["Go", "Gin", "PostgreSQL", "pgx"],
   },
   {
-    title: "Personal Portfolio",
+    title: "Fabric",
+    category: "At Dream11 / Infrastructure",
+    focus: "Service discovery across Kubernetes and EC2.",
     description:
-      "Developed a personal developer portfolio from scratch using Next.js and Daisy UI. The project showcases my work, skills, and blog posts, with a clean, responsive design. Implemented dynamic routing for blog pages. The portfolio highlights user-friendly features and a modern UI, demonstrating my ability to build sophisticated web applications from the ground up.",
-    githubLink: "https://github.com/npv12/portfolio",
-    liveLink: HOST_LINK,
-    tags: ["Next.js", "React", "TailwindCSS", "DaisyUI"],
+      "A custom discovery service connecting workloads across two different infrastructure models, without making every consumer understand where a service runs.",
+    highlights: [
+      "Go services for hybrid Kubernetes and EC2 workloads.",
+      "A common discovery layer between orchestration-managed and VM-based services.",
+    ],
+    blogLink: "/blogs/fabric-service-discovery",
+    tags: ["Go", "Kubernetes", "AWS", "Service discovery"],
+  },
+  {
+    title: "Multi-cluster networking",
+    category: "At Dream11 / Platform engineering",
+    focus: "Making deployment intent reach the network.",
+    description:
+      "A Karmada-based GKE deployment system, backed by Kubernetes operators and networking APIs for provisioning and routing across cloud environments.",
+    highlights: [
+      "Two Go operators to reconcile load balancers and routing updates.",
+      "Network APIs for cross-account VPC peering and CIDR allocation on AWS and GCP.",
+    ],
+    blogLink: "/blogs/gke-load-balancer-operators",
+    tags: ["Go", "Karmada", "Kubernetes", "GCP"],
+  },
+  {
+    title: "Configurable agent workflows",
+    category: "At Simbian / Backend platform",
+    focus: "Customer-defined automation with explicit boundaries.",
+    description:
+      "Backend infrastructure for authoring and executing reusable workflows, with persistent sessions, versioned resources, scoped permissions, and parent-to-child tenant distribution.",
+    highlights: [
+      "Separated workflow definitions from execution state and persistent session results.",
+      "Built authoring, portable import/export, and inherited configuration management.",
+    ],
+    blogLink: "/blogs/agent-runtime-spec-task-session",
+    tags: ["Python", "Django", "PostgreSQL", "Multi-tenancy"],
   },
   {
     title: "Sequences",
+    category: "At Blaze AI / Messaging",
+    focus: "Follow-up workflows driven by replies, not just timers.",
     description:
-      "Developed Sequences, a dynamic messaging tool that enables sending direct messages and follow-ups based on response sentiment. If the sentiment is positive, Sequences sends a positive reply. It curates responses and allows for intricate follow-up workflows on Twitter and LinkedIn. The platform is designed for seamless communication, ensuring timely and contextually relevant interactions. This tool enhances engagement and streamlines complex messaging workflows across social media platforms.",
-    liveLink: HOST_LINK + "/blogs/sequence-server-architecture",
-    tags: ["FastAPI", "Twitter", "LinkedIn", "React", "AWS"],
+      "A messaging system for Twitter and LinkedIn that uses response sentiment to choose follow-up paths and coordinate scheduled communication.",
+    highlights: [
+      "FastAPI services and event-driven execution on AWS.",
+      "Workflow branching based on response sentiment and follow-up state.",
+    ],
+    blogLink: "/blogs/sequence-server-event-driven-architecture",
+    tags: ["Python", "FastAPI", "AWS", "Event-driven"],
   },
   {
-    title: "Tweet Library",
+    title: "Social data and engagement",
+    category: "At Blaze AI / Data pipelines",
+    focus: "Connecting social signals to actions.",
     description:
-      "Developed the Tweet Library, a suite of curated tools designed to craft the perfect tweet. Users can select the tweet type, desired tone, and input basic information to generate a tweet optimized for impressions. This feature ensures your tweets resonate with your audience, leveraging data-driven insights to maximize engagement and impact. The Tweet Library simplifies the tweeting process, making it easier to create impactful social media content.",
-    tags: ["Next.js", "ChatGPT", "Prompt Engineering"],
-  },
-  {
-    title: "Quests",
-    description:
-      "Developed the Quests feature for a Web3 platform, enabling the creation of interactive quests that reward users for various actions. Users can earn rewards by liking tweets, following users, retweeting, joining Discord or Telegram groups, and more. This feature fosters engagement and community involvement by gamifying social interactions and incentivizing participation. Quests enhance user experience by seamlessly integrating with popular social media platforms and providing tangible rewards for user engagement.",
-    tags: ["Quests", "MicroServices", "Lambda", "Stepfunction"],
-  },
-  {
-    title: "Audience Builder",
-    description:
-      "Developed the Audience Builder, a comprehensive tool that compiles lists of people on Twitter along with additional data, such as direct messaging availability, wallet addresses, and users&lsquo; net worth based on wallet data. This feature allows for strategic engagement and personalized interactions. Additionally, I played a key role in scaling the tool&lsquo;s user base from 500k to 100M, significantly enhancing its reach and impact. The Audience Builder is a powerful asset for targeted marketing, leveraging rich data insights to optimize connection strategies.",
-    tags: ["Python", "Web3", "Scripting"],
-  },
-  {
-    title: "WeAreGodsOf",
-    description:
-      "Developed wearegodsoff, an internal tool designed for efficient service management and admin operations. This tool retrieves logs from various services, grants administrative accesses like promoting users to admin levels, adding credits, and downloading invoices. It also manages user status, including banning and unbanning users. wearegodsoff streamlines admin tasks, ensuring quick and reliable management of user interactions and service logs, enhancing overall operational efficiency.",
-    tags: ["Next.js", "React", "TailwindCSS"],
+      "Audience discovery, Twitter Listening, and reward-based quests. These services combined social-platform data, segmentation, and campaign execution.",
+    highlights: [
+      "Lambda and Step Functions pipelines for social listening and campaign actions.",
+      "Audience enrichment using messaging availability and wallet data, alongside quests spanning social integrations.",
+    ],
+    tags: ["Python", "AWS Lambda", "Step Functions", "Data pipelines"],
   },
 ];
 

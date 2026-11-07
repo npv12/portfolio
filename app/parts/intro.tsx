@@ -1,62 +1,84 @@
-"use client";
-
 import {
-  PiDownloadDuotone,
-  PiEnvelopeOpenDuotone,
-  PiGithubLogoDuotone,
-  PiLinkedinLogoDuotone,
-  PiTwitterLogoDuotone,
+  PiArrowDownBold,
+  PiDownloadSimpleBold,
+  PiGithubLogoBold,
+  PiLinkedinLogoBold,
+  PiXLogoBold,
 } from "react-icons/pi";
 
-import GlowingCircles from "../components/GlowingCircles/circles";
-import { COMPANY, EMAIL, GITHUB, LINKEDIN, NAME, POSITION, TWITTER } from "../data/basic";
+import SkillSphere from "../components/SkillSphere/SkillSphere";
+import { COMPANY, GITHUB, LINKEDIN, NAME, TWITTER } from "../data/basic";
+import Experiences from "../data/experience";
+import { allSkills } from "../data/skills";
 
 const socials = [
-  { href: GITHUB, label: "GitHub", icon: PiGithubLogoDuotone },
-  { href: LINKEDIN, label: "LinkedIn", icon: PiLinkedinLogoDuotone },
-  { href: `mailto:${EMAIL}`, label: "Email", icon: PiEnvelopeOpenDuotone },
-  { href: TWITTER, label: "Twitter", icon: PiTwitterLogoDuotone },
+  { href: GITHUB, label: "GitHub", icon: PiGithubLogoBold },
+  { href: LINKEDIN, label: "LinkedIn", icon: PiLinkedinLogoBold },
+  { href: TWITTER, label: "X (Twitter)", icon: PiXLogoBold },
 ];
 
 export default function Introduction() {
+  const [first, ...rest] = NAME.split(" ");
+  const previous = Experiences.slice(1).map((exp) => exp.company);
+
   return (
-    <div id="intro" className="min-h-[calc(100vh-4rem)] flex flex-col justify-center py-16">
-      <div className="hidden lg:block">
-        <GlowingCircles maxRadius={712} position={30} />
-      </div>
-      <div className="mb-4">
-        <p className="lg:text-2xl text-lg font-medium text-base-content/70">
-          Hello, I&apos;m
+    <section id="intro" className="hero shell" aria-labelledby="hero-name">
+      <div>
+        <p className="hero__eyebrow mono rise" style={{ "--i": 0 } as React.CSSProperties}>
+          <span className="status-dot">Backend engineer at {COMPANY}</span>
+          <span aria-hidden="true">/</span>
+          <span>Python &amp; Go</span>
         </p>
-        <h2 className="lg:text-8xl md:text-6xl text-4xl font-extrabold bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">
-          {NAME}
-        </h2>
-      </div>
-      <p className="mt-4 lg:text-2xl text-xl text-base-content/80">
-        {POSITION} at {COMPANY}
-      </p>
-      <div className="flex space-x-4 mt-6">
-        {socials.map(({ href, label, icon: Icon }) => (
-          <a
-            key={label}
-            href={href}
-            className="text-2xl hover:text-primary transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={label}
-          >
-            <Icon />
+        <h1 id="hero-name" className="hero__name rise" style={{ "--i": 1 } as React.CSSProperties}>
+          <span>{first}</span>
+          <span>{rest.join(" ")}</span>
+        </h1>
+        <p className="hero__statement rise" style={{ "--i": 2 } as React.CSSProperties}>
+          I build the <em>services that make the product work.</em>
+        </p>
+        <p className="hero__description rise" style={{ "--i": 3 } as React.CSSProperties}>
+          APIs, PostgreSQL, cloud infrastructure, and agent runtimes. Right now
+          that means multi-tenant platforms for security operations at{" "}
+          {COMPANY}.
+        </p>
+        <div className="hero__actions rise" style={{ "--i": 4 } as React.CSSProperties}>
+          <a href="#work" className="button button--primary">
+            See the work <PiArrowDownBold aria-hidden="true" />
           </a>
-        ))}
+          <a href="/resume.pdf" download className="button button--ghost">
+            <PiDownloadSimpleBold aria-hidden="true" /> Resume (PDF)
+          </a>
+        </div>
+        <div className="hero__socials rise" style={{ "--i": 5 } as React.CSSProperties}>
+          {socials.map(({ href, label, icon: Icon }) => (
+            <a
+              key={label}
+              href={href}
+              className="icon-button"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+            >
+              <Icon aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+        <p className="hero__previously mono rise" style={{ "--i": 6 } as React.CSSProperties}>
+          <span>Previously</span>
+          {previous.map((company) => (
+            <strong key={company}>{company}</strong>
+          ))}
+        </p>
       </div>
-      <a
-        href="/resume.pdf"
-        download
-        className="btn btn-secondary text-secondary-content w-48 mt-6"
-      >
-        <PiDownloadDuotone size={24} />
-        View Resume
-      </a>
-    </div>
+      <div className="hero__visual rise" style={{ "--i": 3 } as React.CSSProperties}>
+        <SkillSphere
+          skills={allSkills.map(({ name, Icon }) => ({
+            name,
+            icon: <Icon aria-hidden="true" />,
+          }))}
+        />
+      </div>
+    </section>
   );
 }

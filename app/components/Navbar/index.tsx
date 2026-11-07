@@ -1,172 +1,188 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useSyncExternalStore } from "react";
-import {
-  PiBrainDuotone,
-  PiCodeBlockDuotone,
-  PiEnvelopeDuotone,
-  PiHouseDuotone,
-  PiLightbulbDuotone,
-  PiPaletteDuotone,
-  PiQuotesDuotone,
-  PiTextOutdentDuotone,
-} from "react-icons/pi";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PiListBold, PiMoonBold, PiSunBold, PiXBold } from "react-icons/pi";
 
 import { NAME } from "../../data/basic";
-import { themes } from "../../data/themes";
-import { setTheme as setGlobalTheme } from "../../utils/cookie";
+import { setTheme } from "../../utils/cookie";
 
 const navItems = [
-  { name: "Home", section: "intro", icon: <PiHouseDuotone size={18} /> },
-  { name: "Skills", section: "skills", icon: <PiBrainDuotone size={18} /> },
-  {
-    name: "Projects",
-    section: "projects",
-    icon: <PiCodeBlockDuotone size={18} />,
-  },
-  {
-    name: "Experience",
-    section: "experience",
-    icon: <PiLightbulbDuotone size={18} />,
-  },
-  {
-    name: "Contact",
-    section: "contact",
-    icon: <PiEnvelopeDuotone size={18} />,
-  },
-  { name: "Blogs", section: "blogs", icon: <PiQuotesDuotone size={18} /> },
+  { name: "Work", href: "/#work", section: "work" },
+  { name: "Projects", href: "/#projects", section: "projects" },
+  { name: "Writing", href: "/blogs", section: null },
+  { name: "Contact", href: "/#contact", section: "contact" },
 ];
 
-const subscribeTheme = (onChange: () => void) => {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
-  return () => observer.disconnect();
+const [first, ...rest] = NAME.split(" ");
+const last = rest.join(" ");
+const initials = NAME.split(" ")
+  .map((part) => part[0])
+  .join("");
+
+const resolvedTheme = () => {
+  const explicit = document.documentElement.getAttribute("data-theme");
+  if (explicit === "light" || explicit === "dark") return explicit;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 };
 
-const readTheme = () =>
-  document.documentElement.getAttribute("data-theme") || "light";
+export default function Navbar() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-const Navbar = () => {
-  const router = useRouter();
-  const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "light");
-
-  const scrollToSection = (section: string) => {
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      const drawer = document.getElementById(
-        "navbar-drawer"
-      ) as HTMLInputElement;
-      if (drawer && drawer.checked) {
-        drawer.click();
-      }
-    }
+  const isCurrent = (item: (typeof navItems)[number]) => {
+    if (item.section === null) return pathname.startsWith("/blogs");
+    return pathname === "/" && active === item.section;
   };
 
-  const handleNavbarNavigation = (section: string) => {
-    if (section === "blogs") {
-      router.push("/blogs");
-    } else if (window.location.pathname !== "/") {
-      router.push(`/#${section}`);
-    } else {
-      scrollToSection(section);
-    }
-  };
-
-  useEffect(() => {
-    const hash = window.location.hash.replace("#", "");
-    if (hash && window.location.pathname === "/") {
-      scrollToSection(hash);
-    }
+  const close = useCallback((returnFocus = false) => {
+    setOpen(false);
+    if (returnFocus) menuButtonRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Highlight the section currently in view on the home page.
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const sections = navItems
+      .map((item) => item.section && document.getElementById(item.section))
+      .filter((el): el is HTMLElement => Boolean(el));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close(true);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 768) close();
+    };
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [open, close]);
+
+  const toggleTheme = () =>
+    setTheme(resolvedTheme() === "dark" ? "light" : "dark");
+
   return (
-    <div className="drawer sticky top-0 z-50">
-      <input id="navbar-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        <div className="navbar bg-base-300/80 backdrop-blur-md w-full">
-          <div className="flex-none lg:hidden">
-            <label
-              htmlFor="navbar-drawer"
-              aria-label="open sidebar"
-              className="btn btn-square btn-ghost"
-            >
-              <PiTextOutdentDuotone
-                className="inline-block w-5 h-5"
-                size={18}
-              />
-            </label>
-          </div>
-          <div className="mx-2 flex-1 px-2 text-xl font-bold">
-            {NAME.split(" ")[0]}
-          </div>
+    <header
+      className="site-header"
+      data-scrolled={scrolled}
+      data-open={open}
+    >
+      <div className="shell">
+        <div className="site-header__bar">
+          <Link href="/" className="brand" onClick={() => close()}>
+            <span className="brand__mark" aria-hidden="true">
+              {initials}
+            </span>
+            <span className="brand__name">
+              {first} <span className="brand__last">{last}</span>
+            </span>
+          </Link>
 
-          <div className="hidden flex-none lg:block">
-            <ul className="menu menu-horizontal">
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <a
-                    onClick={() => handleNavbarNavigation(item.section)}
-                    className="font-bold normal-case flex items-center cursor-pointer"
-                  >
-                    {item.icon}
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <nav className="nav-links" aria-label="Primary">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="nav-link"
+                aria-current={
+                  isCurrent(item)
+                    ? item.section === null
+                      ? "page"
+                      : "true"
+                    : undefined
+                }
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
 
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost rounded-btn"
-            >
-              <PiPaletteDuotone size={18} />
-              {theme.charAt(0).toUpperCase() + theme.slice(1)}
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu dropdown-content bg-base-200 rounded-box mt-4 w-44 p-2 shadow-sm z-50"
-            >
-              {themes.map((t) => (
-                <li key={t}>
-                  <a onClick={() => setGlobalTheme(t)}>
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <button
+            type="button"
+            className="icon-button"
+            onClick={toggleTheme}
+            aria-label="Toggle color theme"
+            title="Toggle color theme"
+          >
+            <PiMoonBold className="theme-icon--moon" aria-hidden="true" />
+            <PiSunBold className="theme-icon--sun" aria-hidden="true" />
+          </button>
+          <button
+            ref={menuButtonRef}
+            type="button"
+            className="icon-button menu-button"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? (
+              <PiXBold aria-hidden="true" />
+            ) : (
+              <PiListBold aria-hidden="true" />
+            )}
+          </button>
+        </div>
+
+        <div
+          id="mobile-menu"
+          className="mobile-menu"
+          data-open={open}
+          inert={!open}
+        >
+          <div>
+            <nav aria-label="Mobile">
+              <ul>
+                {navItems.map((item, index) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      onClick={() => close()}
+                      aria-current={
+                        item.section === null && isCurrent(item)
+                          ? "page"
+                          : undefined
+                      }
+                    >
+                      <span className="mono">0{index + 1}</span>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
-      <div className="drawer-side">
-        <label
-          htmlFor="navbar-drawer"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        />
-        <ul className="menu bg-base-200 min-h-full w-80 p-4">
-          {navItems.map((item) => (
-            <li key={item.name}>
-              <a
-                onClick={() => handleNavbarNavigation(item.section)}
-                className="btn btn-ghost normal-case flex items-center justify-start"
-              >
-                {item.icon}
-                {item.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    </header>
   );
-};
-
-export default Navbar;
+}

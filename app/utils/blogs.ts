@@ -47,6 +47,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
       slug: filename.replace(".md", ""),
       readingTime: readingTimeText,
       description,
+      tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
     };
   });
 
