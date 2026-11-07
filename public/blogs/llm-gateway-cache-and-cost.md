@@ -1,70 +1,94 @@
 ---
-title: "Prompt-Cache Affinity and Per-Session LLM Cost"
-date: "2026-09-08"
-description: "Getting the provider's prompt cache to actually hit, then attributing the bill to the session that caused it. Two adjacent gateway problems, one bug in between, and what I learned measuring both."
+title: "The Session ID That Never Reached the LLM Proxy"
+date: "2026-08-04"
+description: "A long-running agent with a stable prompt was getting 0–8% cache hits. The cause was one field that a client library quietly dropped. Fixing it took cached prompt usage to about 91%."
 author: "Pranav Nedungadi"
-tags: ["LLM", "Caching", "Cost", "Observability", "Architecture"]
+tags: ["Python", "LLM", "Debugging", "Caching"]
 ---
 
-# Prompt-Cache Affinity and Per-Session LLM Cost
+# The Session ID That Never Reached the LLM Proxy
 
-Building an LLM gateway surfaces two adjacent problems. First, getting the provider's prompt cache to actually hit. Second, knowing which session spent the money. They look unrelated, but they live in the same request path and share a failure mode: neither is visible until you measure the raw traffic.
+We had a long-running agent whose conversation only ever grew at the end. The system prompt never changed. On paper, it was the ideal workload for prefix caching. In practice it was getting between zero and eight percent cache hits, and every turn paid for the whole conversation again.
 
-## Why prompt caching depends on affinity
+After the fix, a full run of the same agent served about 91% of its prompt tokens from cache. The main agent and its evaluator cost nine cents together. The fix itself was a few lines. Finding where those lines belonged was the interesting part, so this post is mostly about how I narrowed it down.
 
-Providers cache the prefix of a request, meaning the system prompt plus the prior messages in the conversation. That cache lives on a specific replica. If the same conversation lands on the same replica again, most of the prompt is a cache read, which is far cheaper. If it lands on a different replica every time, the cache misses and you pay full price for the whole prefix.
+## Two suspects
 
-The routing key is the session id. The gateway maps a stable session id to an affinity header so requests for one conversation stick to one replica. Without that mapping, each request picks a random replica and the hit rate collapses to single digits.
+When an append-only conversation doesn't cache, there are really two ways it can happen:
 
-Affinity is necessary but not sufficient. A growing conversation must also keep the system prompt byte-identical and append only new messages. If the prefix changes, nothing can hit regardless of which replica you land on.
+1. **The prefix keeps changing.** Something like a timestamp, a reordered tool list, or an edited earlier message means the provider never sees the same bytes twice.
+2. **The requests land on different replicas.** Our provider setup used session affinity to route a conversation back to the replica that already had its prefix cached. If that routing key goes missing, every request is effectively a cold start.
 
-## The bug worth writing down
+Both give you the same expensive bill. Only the first one is fixed by touching the prompt, so I wanted to rule it out before changing anything.
 
-We measured a cache hit rate of zero to eight percent and traced it to the client library. On the proxy route, it stripped the top-level metadata field from the outgoing request body, so only `max_tokens`, `messages`, and `model` were actually sent. The session id never reached the proxy, the affinity header was random, and the cache was effectively dead.
-
-The fix was to carry the session id inside the `extra_body` metadata instead, which the library forwards verbatim.
-
-```python
-response = await litellm.acompletion(
-    model=model,
-    messages=messages,
-    max_tokens=max_tokens,
-    extra_body={
-        "metadata": {
-            "session_id": session.id,
-            "prompt_name": "agent_run",
-            "object_id": session.object_id,
-        }
-    },
-)
+```mermaid
+flowchart TD
+    A[Append-only conversation] --> B[Model client adapter]
+    K[Stable session key] --> B
+    B --> C[Proxy request body]
+    C --> D{Session key present?}
+    D -->|No| E[Unstable provider affinity]
+    D -->|Yes| F[Session-affine routing]
+    E --> G[Repeated cold prefixes]
+    F --> H[Prefix reuse when available]
 ```
 
-## Verification matters more than the fix
+I fingerprinted the system prompt across turns and rebuilt the message sequence. The system content was byte-for-byte identical, and new turns were appended rather than spliced into the middle. That doesn't guarantee a cache hit, but it made "the prompt is changing" much less likely.
 
-The fix was trivial. Proving it worked was not. I ran a local listener that captured the raw outgoing body so I could see exactly what the proxy received. Without that, I was debugging from dashboard numbers I did not trust.
+That left routing. Our parameter dictionary clearly had the session ID in it. For a while I took that as proof the routing was fine. It wasn't proof of anything, because I was looking in the wrong place.
 
-Replica hopping has a signature. Cache hits land one or two requests back at roughly one over the replica count. That is a useful smell: if you clear cache averages and see hits clustered a few requests in the past, you are bouncing between replicas, not rebuilding the prompt. I plotted the cached-token fraction per request rather than the average, because an average hides the pattern. The clusters showed up immediately.
+## The dictionary is not the request
 
-The verification was a loop, not a one-off. I captured the raw body, picked the usage detail out of the response, computed cached tokens, and compared them against the control. Iterate until the raw body and the usage numbers tell the same story, because they will not agree until the session id is actually in the forwarded payload.
+The question that mattered was what actually left the process, not what our code had built in memory.
 
-After the fix, a full agent run hit 91 percent cached tokens and cost $0.09. A control session on the old code sat at 5 percent. A three-request growing conversation cached 154 of 174 tokens, then 173 of 193. The prefix stayed stable and the cache paid off.
+So I pointed the client at a small local HTTP listener in place of the proxy and captured the raw request body. It had the model, the messages, and the output limit. Our top-level `metadata` wasn't there at all.
 
-## Watch the proxy cache
+With the library version and proxy client route we were using, that field was dropped during serialization. Our code had set the value correctly, and the next layer down threw it away without a warning. When I checked from the proxy's side, the session key was missing there too.
 
-Distinguish the proxy's own response cache from the provider's prefix cache. The proxy cache can serve a frozen response and report zero cached tokens, which looks identical to a cache miss if you are not careful. Claims of low hit rates can be the analytics measuring a response cache that returns no usage detail at all. When you are measuring prefix caching, bypass the proxy cache deliberately so the request actually reaches the provider and you get real usage numbers back.
+That also explained why my earlier tweaks to the dictionary hadn't changed anything. The provider can't route on a key it never receives.
 
-## Attributing cost to the work that caused it
+## The fix: use the field the adapter actually forwards
 
-Cost attribution needs one row per LLM call with cost, prompt tokens, response tokens, cache read tokens, cache creation tokens, a prompt name, the model, the host, a feature, and an object id that ties the call to the work it served. Then roll it up daily per account, user, feature, and model, and maintain a cumulative per-account total under a row lock. Cache the daily total with a short TTL so dashboards do not hammer the database.
+The adapter did pass `extra_body` through untouched, so I moved the session metadata there. This is simplified from the real parameter builder:
 
-Cost itself is tokens times price per million, and on the proxy route it can come from a response cost header. Capture it at one central point after every call so there is a single definition of cost across the codebase. Two places that calculate cost two ways will disagree, and you will spend a sprint reconciling them.
+```python
+extra_body = {
+    **extra_body,
+    "metadata": {
+        **extra_body.get("metadata", {}),
+        "session_id": cache_key,
+    },
+}
+```
 
-## Why per-object attribution
+The nested merge is deliberate. If you overwrite `extra_body` you fix affinity and quietly delete some other provider option. If you overwrite `metadata` you can wipe another caller's attribution fields. Either would have shown up later as a confusing new bug.
 
-A model-level dashboard tells you which model is expensive, not which feature or which session. Grouping by prompt name and object id finds the work that is actually burning money. That query is what turns "LLMs are expensive" into "this one prompt is expensive". The difference matters because the second version tells you what to fix.
+I didn't take "the library accepts this keyword" as evidence either. I ran the capture again, confirmed the serialized body now carried the stable key, and only then tested against the real proxy.
 
-## Tradeoffs, stated explicitly
+## Proving it with a tiny experiment
 
-Affinity fights load balancing. Pinning a conversation to a replica concentrates load and makes failure recovery harder, since a cold replica starts unprimed. Per-call rows are high volume, and rollups plus short TTL caches introduce staleness. I accept all three because the alternative is paying full price on every prompt and having no idea which session caused the bill. Make the tradeoff explicit instead of hoping it does not matter.
+Fleet-wide averages are a poor way to check a fix like this. They mix cold starts, unrelated conversations, and different routing paths together. So I built a three-request conversation that grew by one turn each time, where I knew exactly which bytes ought to be reused.
 
-The real lesson is that both problems were invisible until I measured the raw request and the usage detail side by side. Cache affinity and cost attribution are only hard because nothing on the happy path tells you they are broken.
+On the later requests the provider reported **154 of 174** prompt tokens cached, then **173 of 193**. The new suffix was uncached and almost all of the existing prefix was reused. That's the shape you'd expect.
+
+There was one trap here. The proxy also had a response cache, which can return an old answer without calling the provider at all. When that happens, the provider's usage numbers stop telling you anything about prefix reuse. I used the route's cache-bypass controls so every request actually reached the provider. A response cache and a prefix cache are separate things, and it's easy to measure one when you meant the other.
+
+## What it changed
+
+| Run | Cached share of prompt tokens |
+| --- | ---: |
+| Control session, old path | ~5% |
+| Full agent run, fixed path | ~91% |
+
+The fixed run's main agent and evaluator cost **$0.09** in total. These are individual runs, not a controlled cost study, and a different conversation length or tool output will change the bill. What convinced me was the repaired request body and the predictable prefix reuse in the small experiment, more than the dollar figure.
+
+## What I took away
+
+The code change was small. The method is what I've kept using:
+
+- Check that the prompt is stable before blaming the cache.
+- Inspect the serialized request, not the object that produced it.
+- Check what the receiving side actually saw.
+- Compare usage call by call, not as an average.
+
+If a setting looks right in code but has no effect downstream, look at the first representation the receiving system sees. Here a whole routing feature had silently turned into a no-op somewhere between a Python dict and an HTTP body, and logging the dict would never have shown it.

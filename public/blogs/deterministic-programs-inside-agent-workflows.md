@@ -1,51 +1,92 @@
 ---
-title: "Use an Agent for Judgment, a Program for the Contract"
-date: "2026-11-07"
-description: "Where deterministic execution fits inside an agent workflow, and why moving work out of the model does not remove the runtime's responsibilities."
+title: "Taking the LLM Out of a Workflow's Last Mile"
+date: "2026-10-13"
+description: "I replaced a predictable integration step with a versioned Python program inside the agent runtime. Delivery ran with zero model calls. The hard parts were field precedence, permissions, and partial success."
 author: "Pranav Nedungadi"
-tags: ["Python", "Agents", "Architecture", "Backend"]
+tags: ["Python", "Agents", "Integrations", "Reliability"]
 ---
 
-# Use an Agent for Judgment, a Program for the Contract
+# Taking the LLM Out of a Workflow's Last Mile
 
-Not every step in an AI workflow needs another model call. Mapping a known severity, extracting a hostname, assembling a payload, and calling a documented API are usually program-shaped tasks.
+By the time this step ran, the thinking was done. An agent had investigated, gathered evidence, and reached a conclusion. All that was left was mechanical: map the result onto known fields, create or link a case, send a configured webhook, and record the outcome.
 
-I worked on moving a predictable integration workflow into executable code inside an agent runtime. The gain was not just cost. It made field precedence, validation, and failure behavior inspectable instead of relying on the model to remember the same rules on every run.
+Yet we were running that step through another reasoning loop. That added variance where we needed a contract. A severity label shouldn't change because a second agent phrased its interpretation differently. A webhook hostname shouldn't depend on whether a model remembered to strip the URL path.
 
-## Find the boundary of judgment
+So I moved the last mile into a versioned Python executable that runs inside the same agent runtime. The investigation still uses an agent. Delivery takes the accepted result as data. In the validation runs, the delivery path made **no model calls at all**.
 
-An agent may need to interpret evidence and produce an investigation. Once that result has a defined shape, downstream delivery can consume it as data.
+## Draw the line after the judgment
 
-The deterministic layer should prefer the investigation's accepted summary and severity, then use explicitly documented source fallbacks when those fields are absent. “Ask the model to choose again” risks changing a conclusion during delivery.
+The program doesn't redo the investigation. It uses the investigation's summary and severity first, and falls back to explicitly defined source fields only when those are missing.
 
-The same applies to identifiers. Extracting the hostname from a URL should use a URL parser. Choosing the right source URL needs a known precedence rule. Those are different decisions and deserve separate code.
+That precedence matters more than it looks. The raw event and the finished analysis can legitimately disagree, because the agent may have raised or lowered the severity based on what it found. If delivery recomputed severity from the raw event, it would quietly undo the investigation's conclusion.
 
-## A program still runs inside a policy
+```mermaid
+flowchart TD
+    E[Evidence and source event] --> A[Agent investigation]
+    A --> R[Accepted structured result]
+    R --> P[Program prepares validated payload]
+    E -. explicit field fallbacks .-> P
+    P --> C[Primary case operation]
+    C --> W[Optional webhook delivery]
+    C --> O[Record primary outcome]
+    W --> F[Finalize delivery result]
+    O --> F
+```
 
-Moving execution into Python does not grant it unrestricted access. It should call external tools through the runtime's broker, using the same permission model and execution identity as other workflow actions.
+The handoff between agent and program needs a stable data shape. Without one, the program just becomes another interpreter of free-form prose.
 
-That keeps audit attribution and tool authorization at a shared boundary. Otherwise “deterministic execution” becomes a side door around controls that the agent path correctly enforces.
+## Field transformations are just code
 
-Version the executable reference with the workflow. A later code promotion must not silently alter a historical run's definition. Inputs and relevant resource references need to be pinned or snapshotted according to the execution contract.
+One integration wanted a hostname rather than a full URL. That's a job for a URL parser, not string slicing:
 
-## Admission is separate from preparation
+```python
+from urllib.parse import urlsplit
 
-A definition can look valid while referring to a deleted executable. Readiness needs to distinguish configuration completeness from resolvable execution dependencies.
+source_url = "https://Example.test:8443/incidents/123?view=full"
+host = urlsplit(source_url).hostname  # "example.test"
+```
 
-Even after admission, materializing the program's files can fail. If the application has already persisted an accepted run, swallowing that failure can leave it permanently pending with no task queued.
+The scheme, port, path, and query are all gone, and the case is normalized. Parsing a URL isn't the same as being allowed to contact it, though. The caller still validates the scheme and the expected destination.
 
-The runtime needs an observable setup failure or a recoverable pending state. A program that never started should not look like an agent that is still thinking.
+The other mappings were just as explicit: accepted investigation fields first, known raw fields second, defined severity conversions, and an opt-in flag for the secondary webhook. A missing required field fails during preparation. It doesn't become an invitation for a model to improvise.
 
-## Verify zero-model execution as a claim
+## Stay inside the runtime's boundaries
 
-Source code without an explicit model call is not sufficient evidence that a workflow used none. Admission, planning, verification, or finalization can introduce calls elsewhere in the runtime.
+The program calls tools through the runtime's broker. It doesn't import credentials and hit providers directly. That keeps permissions, execution identity, and traces on the same path as the rest of the platform.
 
-I check the execution definition, session trace, and usage ledger together. Even the ledger needs scrutiny: some auxiliary calls may bypass the normal accounting hook. “No recorded model calls” is a narrower claim than “no model work occurred.”
+Being deterministic doesn't make a program safe. It can deterministically send the wrong payload, or skip a policy check if you give it a side door. What you gain is that its transformations and its allowed side effects can be inspected.
 
-For the program itself, preparation checks should cover malformed input, missing analysis, supported source variants, opt-in secondary effects, and partial failures. A successful HTTP exchange with a test receiver is not proof of the real external business outcome.
+The workflow also pins a specific executable version. Promoting a newer package affects future runs only. It never changes which code is associated with a historical session.
 
-## Keep a small interface
+## Partial success didn't go away
 
-The useful split is not agents versus code. It is uncertain interpretation versus repeatable execution. Let the model reason where the input requires judgment; give the result a typed boundary; execute known contracts with a small program.
+Creating the case and sending the webhook are two separate side effects. If the case is created and the webhook fails, rerunning the whole workflow can create the case a second time.
 
-The runtime still owns scheduling, identity, permissions, dependencies, and durable outcomes. Deterministic code reduces one source of uncertainty. It does not eliminate the backend around it.
+So the result has to keep the primary reference even when the secondary step fails. Conceptually:
+
+```json
+{
+  "primary": {"status": "completed", "reference": "case-123"},
+  "delivery": {"status": "failed", "retryable": true}
+}
+```
+
+A single `success: false` can't tell "nothing happened" apart from "the case exists, but the notification didn't go out." Those need very different recovery.
+
+Rate limits and transient server errors justify bounded retries at the delivery step. Invalid input and authentication failures need a person, not more attempts. A timeout is genuinely ambiguous: the remote side may have processed the request before the response got lost. Preventing duplicates there needs an idempotency key or a lookup against the destination. Taking the call away from an LLM doesn't buy you exactly-once delivery.
+
+## The first failures weren't about reasoning at all
+
+During validation, one destination turned out to be an offline tunnel. Later attempts timed out at the broker. No amount of re-running the reasoning step could have fixed either one. Before retrying a mutation, you have to check that the destination is reachable with something that has no side effects.
+
+Once the test receiver was up, **four local workflow executions completed with HTTP 200 delivery**. I went through their traces: the expected provider lookup, case operation, webhook, and finalization all ran. The executable version matched the package I'd tested, and recorded usage showed zero model calls and zero goal evaluations for those runs.
+
+One caveat I kept explicit is that the test receiver accepted anything. That proved payload construction and HTTP delivery. It didn't prove a real ticket got created in the downstream product. A green end-to-end test against a permissive receiver can still hide a schema error on the real destination.
+
+## What changed, and what's still hard
+
+The delivery path no longer asks a model to make the same field decisions on every run. Its mapping rules can be tested directly against missing analysis, different source variants, malformed URLs, optional delivery, and transient failures.
+
+The runtime still owns admission, dependency resolution, permissions, scheduling, and durable outcomes. A pinned executable can still fail before it starts. A tool can still return an error inside a successful-looking transport envelope. External delivery still has partial success.
+
+The lesson was narrower than "replace agents with code." Keep the agent where the evidence needs judgment. Once a result has been accepted, stop asking another model to rediscover the delivery contract.

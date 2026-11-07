@@ -1,73 +1,97 @@
 ---
-title: "Keeping a Long-Running Agent Inside Its Context Window"
+title: "Compacting an Agent Is Easy. Keeping It Compacted Is Not."
 date: "2026-09-10"
-description: "How to keep a long-running agent inside its context window without destroying the plan and state it needs. Six steps that cap, compact, summarize, and recover, with the load-bearing persistence nobody thinks about."
+description: "Our agent summarized its history, fit back into context, and then reloaded the full transcript on the very next turn. How I turned compaction into a durable checkpoint that survives restarts."
 author: "Pranav Nedungadi"
-tags: ["Agents", "LLM", "Context Window", "Architecture", "Reliability"]
+tags: ["Python", "Agents", "Persistence", "Architecture"]
 ---
 
-# Keeping a Long-Running Agent Inside Its Context Window
+# Compacting an Agent Is Easy. Keeping It Compacted Is Not.
 
-Every long-running agent has the same problem. It calls tools, and tools return huge results: entire files, query outputs, log tails. You cannot just send all of that to the model, because the context window fills and the model starts dropping information or degrading into nonsense. But you also cannot naively summarize everything, because the agent loses two things it cannot afford to lose: the plan it was following, and the exact state it had been working with.
+The first version of compaction worked perfectly, for exactly one turn.
 
-The fix I ended up with is a single pipeline module with six steps. It lives in one file because the steps are tightly coupled. They share constants, placeholder markers, and the compaction boundary. Scattering them across hooks makes them impossible to reason about as one system. If you borrow nothing else from this post, borrow that: this is one stateful pipeline, not a grab bag of context tricks.
+The agent hit its context limit, summarized the old history, and the next model call went through. Then the turn ended. The next turn started, the transcript loader read the session from disk, and it loaded the entire original history again. The conversation was oversized again, so it got summarized again. Each new turn paid to compact the same prefix.
 
-## 1. Cap each tool result
+A better summary prompt wouldn't have fixed this. The bug was a storage question nobody had answered: **which part of the transcript has this summary replaced?**
 
-The first rule is that no single result gets to flood the window. When a tool result exceeds a token threshold, I replace its content in context with a short preview and spill the raw text to a sidecar file.
+After that, I stopped treating compaction as a text transformation. It's a checkpoint in an execution system, and it has to survive the same restarts everything else does.
 
-The cap works by characters first, then by lines. The two-stage order matters: a single fat JSONL line will blow right past a pure line cap, so you count characters and slice the oversized line before you ever think about lines. Character cap first, then line cap on what survives.
+## There are two histories
 
-Some tools are exempt. A skill-loading tool that returns a skill's body has to be read end to end, because the agent's next decision depends on the whole thing. Exemption is a small allowlist, and it is deliberate: exceptions to context capping are decisions, not accidents.
+A session really has two histories, and they want opposite things.
 
-## 2. Micro-compaction before every model call
+- **The full trace** is an audit record. It should keep every tool call and result, enough to reconstruct exactly what happened.
+- **The active context** is a working set. It can't keep every byte forever.
 
-Between calls, ordinary tool results sit untouched in the live text until that live text passes roughly one third of the context window. Only then does the cheap path kick in.
+Truncate the trace to save context and you destroy evidence. Reload the whole trace as context and you undo compaction. So the design keeps both: a compacted checkpoint, plus whatever arrived after it.
 
-At that point, replace the OLDEST tool results with a short placeholder that cites the sidecar reference. Always preserve the most recent results. This is a zero-cost string operation: no model call, no summarization, nothing clever. It buys you room so that the expensive compaction in step 4 happens only when it actually has to.
-
-The trick is the placeholder marker. It is a fixed token that survives both the copy of the message list and the tool-call log, so a later step can find the original text and hydrate it back if needed.
-
-## 3. Detect pressure before it becomes damage
-
-A cheap token estimate keeps the pipeline honest. `len(text) // 4` is good enough for pressure detection; you do not need a tokenizer for this.
-
-The estimate is logged against thresholds at roughly 70, 85, and 97 percent of the window, tagged as warning, compact, and blocking. Detection only. This step does not mutate anything. It exists so you can watch an agent run in production and see the pressure climb, and so steps 4 and 5 know when to fire without recomputing.
-
-## 4. Compact the old portion
-
-When pressure crosses the compact threshold, walk the old part of the conversation and find every tool call. Hydrate any placeholdered results back from the trace log, so the summarizer sees the actual content and not a marker. Then summarize the old turns with a single model call, and rebuild the message list as:
-
-```
-[summary, reconstructed operational state, tool-call log, last N live turns]
+```text
+active context = checkpoint + events after checkpoint boundary
 ```
 
-The reconstruction step is where the agent's working set survives compaction. It preserves the loaded deferred-tool names, the bodies of any invoked skills, and the recent file reads. The agent that comes out of compaction still knows which tools it had loaded and what it last read. Declared tool schemas stay as static overhead; they are never copied into history, so they do not grow the budget on every compaction.
+The checkpoint is more than prose. It also records where the boundary sits and the operational state the next turn needs.
 
-An emergency branch runs at the blocking threshold with tighter budgets and a coarser summary. It is the last defense before the agent cannot call tools at all.
+```mermaid
+flowchart TD
+    T[Durable transcript] --> L[Transcript loader]
+    C[Checkpoint and boundary] --> L
+    L --> W[Summary plus recent events]
+    W --> M[Model invocation]
+    M --> E[New events and tool results]
+    E --> T
+    W --> P{Context pressure?}
+    P -->|Yes| S[Summarize old prefix]
+    S --> C
+```
 
-## 5. Persist the compaction boundary
+The edge that matters is **checkpoint → loader**. My original compactor only rewrote an in-memory message list, so nothing changed for the next worker that loaded the session.
 
-This is the step that costs real money when it is missing, and it is the easiest one to skip.
+## Shrink tool output before you summarize it
 
-The compaction boundary has to be persisted. If you do not store it, the transcript loader re-seeds the next turn from the full pre-compaction history. Every turn past the threshold re-summarizes the same unsummarized messages, over and over. The result is a re-compaction on every single turn, each one a paid model call repeating the same work and slowly bloating the transcript back up. That bug is not subtle and it does not announce itself; it just quietly burns tokens forever.
+A lot of context pressure doesn't need a model call to fix. A tool returns a huge query result, or a log file that turns out to be one enormous JSON line. Keeping all of it inline spends context on data the agent may never look at again.
 
-Persist the boundary once, at compaction time, and load it with the transcript. It is a few bytes and it turns the whole pipeline from a live demo into something you can charge money for.
+So I split the stored result from what goes inline. The full output becomes a retrievable artifact. The context gets a bounded preview and a reference to that artifact. The cap is on bytes as well as lines, because one line can be bigger than the whole preview budget.
 
-## 6. Recover after max output
+Older results can then be swapped for references while recent ones stay inline. That's far cheaper than asking a model to keep re-describing a database dump. It isn't free: it costs storage and the occasional re-read, and a reference is only useful if the agent still has the tool and permission to fetch it.
 
-Sometimes the model stops not because the input is too big but because it hit the maximum output tokens mid-thought. When that happens, append a short "resume mid-thought" user message and let the next call continue from where it stopped. The model picks up cleanly instead of restarting the whole reply.
+## Keep what a summary can't infer
 
-Cap the number of recoveries per session. Without the cap, a model that cannot finish in the budget will loop forever, each recovery spending another call. Three or four attempts is enough; past that, something is wrong with the task and looping will not fix it.
+A summary can describe the task accurately and still drop the things the next turn depends on: the instructions of a skill the agent invoked, the tools it loaded through discovery, the file it was about to edit.
 
-## One pipeline, shared by every agent
+Those aren't conversation. They're execution dependencies. If you leave them to the summarizer, the next turn works only when the summarizer happened to mention them.
 
-Parent and sub-agents run the same compaction classes. Only the trace paths differ, so each agent ends up with its own tool-call ledger and its own sidecar directory. That single choice keeps the code doable: there is one implementation to tune and debug, and each agent's history stays private to it.
+So the retained context has three parts:
 
-## The tradeoffs, stated plainly
+| State | Why retain it? |
+| --- | --- |
+| Task summary | Current objective, decisions, unresolved questions |
+| Operational state | Loaded instructions and relevant execution resources |
+| Recent events | Exact inputs and outputs near the next action |
 
-The recent-results preservation means ordinary results stay full until the window is a third full; agent sessions with many small tool calls carry that overhead. When compaction does run, summarization is lossy and can drop a detail the agent needed three turns later. The placeholders force extra reads back into the sidecar when a result is hydrated. And a short-lived sub-agent should not pay the compaction cost at all: it finishes before it ever crosses a threshold, so you gate the expensive path on window pressure and let small agents run untouched.
+The recent suffix also has to keep tool calls paired with their results. If you split a call from its result, the model API can reject the conversation even though the text reads fine.
 
-Tune the thresholds and the preserved-recent count to your workload. But do not remove the boundary persistence. That one is not a tuning knob, it is the load-bearing wall holding the whole pipeline up.
+## Publish the summary and the boundary together
 
-The general shape here is portable: cap the inputs, compress cheaply, summarize only when pressured, preserve the working set, persist the boundary, and recover from truncation. Specifics will differ, but those six responsibilities are the floor for any agent you plan to run for a long time.
+Suppose the compactor has summarized events through number 800. It writes the summary, then crashes before recording 800 as the new boundary. The loader now pairs the new summary with the old boundary and replays those events twice.
+
+The opposite order is worse. If the boundary advances before the summary is durable, you skip history that was never summarized.
+
+The summary and the boundary have to become visible as one unit. In a database, that's a transaction. With file-backed storage, a versioned checkpoint manifest can name the summary artifact and the boundary together, so the loader can tell a published checkpoint from a half-written one. Two plain file writes in a row don't give you that.
+
+## The test that actually catches it
+
+A compaction test that only inspects the current message list would have passed against my broken version. The test I care about goes through a restart:
+
+1. Build a transcript long enough to trigger compaction.
+2. Persist a checkpoint and its boundary.
+3. Throw away the in-memory context.
+4. Load the session through the normal restart path.
+5. Confirm the old prefix wasn't replayed and the recent suffix appears exactly once.
+
+Then append another event and reload again. The checkpoint should still hold without summarizing the same prefix a second time.
+
+One more thing I watch now is pressure estimates. A rough character-based estimate is fine as a trigger, but it isn't what the provider bills. I've seen our internal estimate disagree badly with the token counts the provider reported. Comparing the two stops "context is huge" from becoming the explanation for every expensive run.
+
+## What this does and doesn't solve
+
+Compaction still loses detail, and artifact references still cost extra reads. Persistence doesn't fix either of those. What it fixes is narrower and more important: once the system has paid to replace a prefix, the next turn actually starts from that replacement.

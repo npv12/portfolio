@@ -1,58 +1,85 @@
 ---
-title: "Moving Permissions Out of JSON Without Changing Their Meaning"
-date: "2026-11-07"
-description: "A permission migration is a semantic migration: preserve wildcards, ordering, explicit denies, deployment compatibility, and a useful rollback."
+title: "Migrating Agent Permissions Without Granting Anything New"
+date: "2026-10-24"
+description: "I moved agent permissions from a JSON blob into role-backed relational rows. The insert was easy. The real work was making sure no agent gained or lost a single permission across backfill, every writer, version snapshots, and rollback."
 author: "Pranav Nedungadi"
-tags: ["PostgreSQL", "Django", "RBAC", "Migrations"]
+tags: ["Django", "PostgreSQL", "RBAC", "Migrations"]
 ---
 
-# Moving Permissions Out of JSON Without Changing Their Meaning
+# Migrating Agent Permissions Without Granting Anything New
 
-JSON is a convenient starting point for an execution policy. A definition can carry its tool grants, filesystem paths, SQL access, and settings in one document. Eventually the product needs reusable roles, relational constraints, and policy management independent of the rest of that definition.
+Our agent definitions kept their permissions inside a JSON configuration document. That was fine while a definition was the only thing anyone managed policy on. Role-backed permissions changed that. A definition would now reference a role, and the role would own rows describing each grant and denial.
 
-I worked through a migration from embedded permission documents to role-backed rows. Creating the tables was the straightforward part. Preserving the meaning of every existing permission was the real work.
+The obvious migration was to parse the JSON and insert rows. That part was easy. The rest of the work came from one requirement: after the migration, **every agent must be able to do exactly what it could do before.** No new access and no lost restriction. Several JSON values carried meanings that a tidier relational schema could have erased without anyone noticing.
 
-## Inventory the semantics before the schema
+## Design the columns around the distinctions that matter
 
-An empty string may be a special resource name. Null may mean an unrestricted scope. An absent list may activate defaults, while an empty list means no access. A denied wildcard must not become an allowed wildcard during normalization.
+A permission wasn't always a resource name plus an allow flag. Tool rules could carry deny patterns or limits. Memory and skill access could be scoped. SQL permissions grouped tables by database. Path grants carried access levels.
 
-These details are easy to lose in a model that looks cleaner than the original JSON. Before choosing columns, I want a mapping from every supported permission form to its relational representation, including legacy forms that still exist in stored data.
+Before designing a single column, I wrote down every distinction that had to survive the move:
 
-Ordering is another quiet requirement. If the API promises a stable list, store a position or define a canonical order. Database row order is not that contract.
+| Distinction | Why collapsing it is dangerous |
+| --- | --- |
+| Missing policy versus empty grants | One may activate defaults; the other may allow nothing |
+| Null scope versus an empty name | They can represent different resource selections |
+| Exact tool name versus wildcard | They authorize different sets of future tools |
+| Allow versus explicit deny | Dropping a deny can widen effective access |
+| Stored order versus arbitrary row order | Reconstruction must not depend on database return order |
 
-## Use a round trip as the migration invariant
+Each sentinel's meaning comes from the policy schema, not from what a database column conventionally means. `NULL` and `""` look interchangeable in a migration script, and in this policy they meant different things.
 
-The strongest local check was not that a row count matched. It was that a normalized policy could survive both conversions:
+## One normalized form to compare against
 
-```text
-stored document
-    -> normalized permission policy
-    -> relational rows
-    -> reconstructed permission policy
+The backfill turned a normalized policy into rows, rebuilt a policy from those rows, and refused to continue unless the two matched:
+
+```mermaid
+flowchart TD
+    J[Stored permission JSON] --> N[Normalize supported policy]
+    N --> R[Build role permission rows]
+    R --> B[Reconstruct policy]
+    N --> Q{Equivalent policies?}
+    B --> Q
+    Q -->|Yes| W[Persist migrated relationship]
+    Q -->|No| F[Stop migration]
 ```
 
-The two normalized policies must agree. This catches dropped denies, lost scope information, and grouping mistakes that a successful insert does not reveal.
+The core of it is short (the function names here describe the steps, not the real API):
 
-Validation is still necessary before conversion. A round trip over two equally wrong converter functions can pass, so fixtures should include policies whose expected meaning is known independently: exact grants, wildcards, empty scopes, explicit denies, and duplicate entries.
+```python
+policy = normalize_permissions(stored_permissions)
+rows = permissions_to_rows(policy)
+restored = rows_to_permissions(rows)
+assert restored == policy
+```
 
-## Expand, backfill, constrain
+That round-trip assertion catches omissions across every permission family at once, which row counts never would. It isn't enough on its own, though, because two converters can share the same bug. I added independent cases for wildcards, explicit denies, null versus empty scopes, SQL grouping, and ordering. Duplicates needed a deliberate decision too. Accepting duplicates in JSON and rejecting them as rows is a behavior change, even when the new constraint is the sensible one.
 
-The deployment sequence matters because migrations may run before new application code reaches every worker.
+## The backfill wasn't the only writer
 
-I prefer adding a nullable relationship first, backfilling through historical models, and only then making the relationship required. During the transition, old code must still tolerate the new schema. If the old JSON remains for compatibility, designate one source of truth for each stage rather than letting both stores accept independent edits.
+This is where a simple migration turns into a real project. Definitions could be edited through the management API, by agent tools, through imported bundles, through inherited configuration from a parent tenant, and through version restore. Some code paths also read the JSON directly, for example when exporting a definition or creating a session snapshot.
 
-The backfill should not accidentally invoke today's model save hooks or versioning logic. Historical migrations need historical models, and any conversion helper they depend on must remain replayable. Importing live policy validators or a live tool catalog means a fresh installation could behave differently months later.
+Moving only the main editor would have left two policy stores with different readers.
 
-## Reads and writes must move together
+So I moved the write boundary itself. Updating the role, replacing its permission rows, and saving the rest of the definition all happen in one transaction. All reads go through a single reconstruction path that combines the row-backed permissions with the non-permission settings.
 
-Replacing the main editor is not enough. Archive export, inheritance, version snapshots, background scheduling, and tool-driven edits may all read the embedded document directly.
+Version snapshots needed extra care. An old version of a definition must never be "completed" using the live role's current rows. If it were, exporting last month's version would silently include today's permissions.
 
-I search for those sibling paths before declaring the migration complete. They need to use a shared reconstruction boundary for reads and a transactional write boundary for updates. Otherwise a version snapshot can capture stale JSON while the executor uses the new rows.
+## Staged schema change, visible deploy window
 
-## Rollback needs current data
+The new relationship went in as nullable, then got backfilled, then was constrained as required. Those are separate steps because a migration and an application rollout don't happen at the same instant. Old code can still be running after the new columns exist.
 
-If users edit the new permission rows after deployment, the old JSON becomes stale. A reverse migration that only clears the new foreign key restores the old schema but loses those edits.
+The legacy JSON stayed around temporarily to cover that window. It had a declared purpose and was always meant to go away. A second independently editable copy of policy can't be allowed to linger forever.
 
-A meaningful rollback reconstructs the current policy into the old representation before deleting the relational state. Even then, rollback may have limits if new policy concepts cannot be represented in the old format. State those limits before rollout.
+The migration also had to be replayable. Historical models skip today's save hooks, and conversion logic used by a migration shouldn't change whenever a live validator changes. That's one of the rare cases where a frozen copy of a helper is the right call and not just duplication.
 
-The payoff of normalization is better ownership and constraints, not permission semantics that changed by accident. The migration succeeds when execution sees the same policy before and after the storage change.
+## Rollback had a hidden data-loss path
+
+Once the application starts editing permission rows, the old JSON is stale. A reverse migration that just drops the new relationship restores the schema and throws away every policy edit made since rollout. Depending on the edit, that could bring back an older, broader grant or quietly remove a restriction someone had just added.
+
+So the reverse migration rebuilds the current permissions back into the legacy document before deleting anything relational. That only worked because I kept the policy vocabulary the same. If the new model had concepts the old one couldn't express, rollback would have needed an explicit limit instead.
+
+## Storage changed, session policy didn't
+
+Moving permissions into role rows doesn't mean running sessions should read the latest role on every turn. Sessions in this runtime keep a snapshot of their execution configuration. New sessions get the reconstructed policy in their snapshot, and existing sessions aren't rewritten just because storage moved.
+
+The acceptance bar was about meaning, not cosmetics. The same definition reconstructs the same policy. Old versions stay old. A rollback keeps every edit made after rollout. A smaller JSON document was never evidence for any of them.

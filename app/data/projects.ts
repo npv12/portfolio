@@ -27,7 +27,8 @@ const projects: Project[] = [
       "Go services for hybrid Kubernetes and EC2 workloads.",
       "A common discovery layer between orchestration-managed and VM-based services.",
     ],
-    blogLink: "/blogs/fabric-service-discovery",
+    blogLink:
+      "/blogs/gke-load-balancer-operators#fabric-one-name-for-kubernetes-and-ec2",
     tags: ["Go", "Kubernetes", "AWS", "Service discovery"],
   },
   {
@@ -53,7 +54,7 @@ const projects: Project[] = [
       "Separated workflow definitions from execution state and persistent session results.",
       "Built authoring, portable import/export, and inherited configuration management.",
     ],
-    blogLink: "/blogs/agent-runtime-spec-task-session",
+    blogLink: "/blogs/agent-shortcuts",
     tags: ["Python", "Django", "PostgreSQL", "Multi-tenancy"],
   },
   {
@@ -66,7 +67,6 @@ const projects: Project[] = [
       "FastAPI services and event-driven execution on AWS.",
       "Workflow branching based on response sentiment and follow-up state.",
     ],
-    blogLink: "/blogs/sequence-server-event-driven-architecture",
     tags: ["Python", "FastAPI", "AWS", "Event-driven"],
   },
   {

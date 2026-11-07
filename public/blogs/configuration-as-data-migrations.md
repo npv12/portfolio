@@ -1,57 +1,102 @@
 ---
-title: "When Product Configuration Needs a Migration History"
-date: "2026-11-07"
-description: "Promoting database-backed product configuration with generated data migrations, explicit table scope, and production-safe comparison."
+title: "The Database Migration Passed. The Images Were Still Missing."
+date: "2026-10-28"
+description: "24 cloned challenge configurations had valid rows and missing images, because the asset paths were keyed by database IDs. How I fixed the release, and why content needs to be treated as a graph that crosses object storage and rendering."
 author: "Pranav Nedungadi"
-tags: ["Python", "Alembic", "PostgreSQL", "Deployment"]
+tags: ["Python", "PostgreSQL", "S3", "Deployment", "Architecture"]
 ---
 
-# When Product Configuration Needs a Migration History
+# The Database Migration Passed. The Images Were Still Missing.
 
-Some product behavior lives in code. Some lives in configuration tables: available activities, progression rules, feature metadata, or defaults that an admin edits in a development environment.
+We had cloned a batch of content configuration into new database rows. The migration succeeded. The rows existed, every foreign key was valid, and the new challenges pointed at the right themes. The images and audio those challenges needed were nowhere to be found.
 
-Once those tables influence production behavior, “copy the development database” stops being an acceptable release procedure. It would copy user state too, and it gives reviewers no useful description of what changed.
+Once I followed the path-building code, the cause was obvious. The asset keys in object storage contained the database theme ID. Cloning a theme gave it a new ID, and nothing about that SQL operation copied the files stored under the old one.
 
-I worked on promoting a bounded set of product configuration through generated Alembic data migrations. The goal was not a universal database synchronization engine. It was a reviewable release artifact for tables the application deliberately treated as configuration.
+The database held a complete graph of rows and an incomplete graph of content. The migration tool couldn't have caught that, because the missing piece lived outside anything it could see.
 
-## Draw the boundary first
+## The reference was hiding in a path
 
-Configuration and operational data often sit next to each other. A theme definition may be configuration; a user's attempt against that theme is not. A reward rule may be configuration; an awarded reward is history.
-
-The promotion tool needs an explicit inventory of eligible tables and fields. Starting from every table and excluding known sensitive ones is too easy to get wrong when the schema grows.
-
-Foreign-key relationships matter too. Configuration rows must be applied in an order that respects their dependencies. Stable identities are needed to compare the same logical object across environments.
-
-## Generate an artifact, not a hidden write
-
-The useful workflow is:
+Here's a simplified version of the layout:
 
 ```text
-compare approved configuration scope
-    -> generate a data migration
-    -> review the diff
-    -> rehearse
-    -> deploy through the normal release path
+database:
+  theme 73  -> source questions
+  theme 290 -> cloned questions
+
+object storage:
+  themes/73/question.png
+  themes/290/question.png  [missing]
 ```
 
-Generation reads the two environments and writes code. It should not quietly update production as a side effect. That separation gives someone a chance to notice an unexpected deletion or an environment-specific value before it becomes a database change.
+No column stored a URL from the cloned row to the source object. The application derived the expected key from the new ID at render time. A foreign-key check has no way to notice that a derived file doesn't exist.
 
-Both databases should be at the expected schema revision before comparison. Otherwise a missing column can masquerade as a configuration difference, or the generated artifact can depend on a schema production does not have yet.
+Different activity types made it more interesting. Some expected one image, some an ordered series of question images, and some audio under a different prefix entirely. A generic database copy knew about none of those dependencies.
 
-## Production becomes the source of truth after cutover
+```mermaid
+flowchart TD
+    C[Clone content configuration] --> D[New theme IDs]
+    D --> Q[Question rows reference new IDs]
+    D --> K[Renderer derives new object keys]
+    O[Objects under source IDs] -. not automatically copied .-> K
+    K --> M[Missing asset at render time]
+    X[Copy and validate asset dependencies] --> K
+    K --> R[Render final artifact]
+```
 
-A hosting migration introduces a dangerous ambiguity: two databases can both look like production. After cutover, a stale source must not be recopied over the new system simply because an old script still points at it.
+The renderer was where the problem surfaced, but it wasn't the renderer's job to invent missing content. This was a release problem.
 
-I want the promotion command to name source and destination explicitly, and the release procedure to distinguish an initial data copy from ordinary configuration promotion. They solve different problems and should not share a casual “sync” button.
+## Copying the files wasn't enough
 
-## Rehearse the data behavior
+I traced the expected keys for every cloned configuration and copied the missing objects over from their source themes. **24 cloned challenge configurations** were affected.
 
-A migration can be syntactically correct and still bind values with the wrong types, update too many rows, or trigger unexpected backfills. A transaction that is rolled back after inspection is useful when the operation supports it.
+Then it got trickier. Some of the source images were JPEGs, while the destination contract expected PNGs. Copying JPEG bytes to a `.png` key makes the file exist without making it a PNG. Those images had to be decoded and re-encoded, not renamed.
 
-Counts alone are not enough. Compare the resulting configuration content, inspect dependent rows, and check the application behavior that relies on it. A deployment health endpoint proves the process is reachable, not that progression rules are correct.
+A browser might sniff the bytes and display it anyway, but other consumers rely on the content type, the extension, or a stricter decoding library. "Storage returned 200" isn't a format check. So the dependency check has two levels: does the object exist at the expected key, and does it actually contain what the consumer expects?
 
-## Keep environmental values out
+## Promoting configuration is narrower than copying a database
 
-URLs, credentials, infrastructure identifiers, and local test fixtures do not belong in a portable product configuration diff. Keep deployment configuration in its own system.
+The same product kept activity definitions and progression rules in database tables. We promoted an explicit allowlist of those configuration tables through generated Alembic data migrations. That made database-driven behavior reviewable, without dragging development users or operational history into production.
 
-Generated data migrations have a cost: they can be verbose, and deletion or rollback semantics need care. But for a bounded configuration surface, a release history is valuable. It turns “someone changed the database” into a change that can be reviewed, deployed in order, and explained later.
+The flow looked like this:
+
+```text
+compare allowed configuration tables
+  -> generate a migration
+  -> review the operations
+  -> rehearse against the target schema
+  -> deploy with the release
+```
+
+Both environments need to be on the expected schema revision before you compare. Stable identities and foreign-key ordering matter. Environment-specific values, like credentials or infrastructure endpoints, have to stay out of the portable diff.
+
+Even a perfect configuration migration can't copy dependencies it doesn't model, though. The missing images showed exactly where "configuration = the rows in the allowlist" stopped being true.
+
+## Rendering is one more boundary
+
+These challenges ended up as shareable images. Results were turned into visual cards through templates, a headless browser, and object storage. I treated that as a backend pipeline, not a screenshot utility, because each stage can fail on its own:
+
+- A browser will happily capture HTML with a broken image in it.
+- An upload can succeed while the application never saves the object reference.
+- A row marked *ready* only means something if the referenced object can be retrieved and contains the right thing.
+
+A few rules came out of that:
+
+- **Persist stable object keys, not signed URLs.** Signed URLs expire. They're delivery credentials, not identities. A retryable job should request a fresh URL, not carry a dead one in its payload.
+- **Treat the renderer's network access as server access.** An image URL in a template becomes a request from inside your infrastructure. Restricting the browser to the asset origins and font hosts the pipeline needs stops a content field from becoming an SSRF path. Escaping HTML and restricting network access are separate protections, and you need both.
+- **Let status reflect publication.** "Ready" means the stored object and the saved reference agree, not that a rendering subprocess exited with code 0.
+
+## Validate from the consumer backward
+
+For the affected content, I checked every derived destination key and repaired the missing objects, including the format conversions. The broader check I'd keep for every release starts from what the user will actually load and works backward:
+
+| Boundary | Check |
+| --- | --- |
+| Configuration | Expected rows, relationships, and schema revision |
+| Asset references | Every derived key resolves |
+| Asset bytes | Expected media format and usable content |
+| Rendering | Required assets appear in a real artifact |
+| Publication | Saved reference resolves to the published object |
+
+A content manifest would make more of this explicit. I didn't need one to diagnose this incident, because following the path-building code was enough to see why the SQL clone hadn't cloned the content.
+
+I didn't take the lesson to be "make the migration tool responsible for everything." It was to stop calling a release done at the last database boundary when the content still has to make it through object storage and rendering before a user can see it.

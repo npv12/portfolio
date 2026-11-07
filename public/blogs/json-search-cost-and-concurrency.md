@@ -1,51 +1,94 @@
 ---
-title: "The Cost of Searching JSON Is Not Just Memory"
-date: "2026-11-07"
-description: "What a PostgreSQL JSON substring benchmark taught me about serialization, query plans, warm caches, and concurrency collapse."
+title: "A JSON Search That Returned the Right Rows and Scanned the Wrong Data"
+date: "2026-10-13"
+description: "One search box over investigation JSON, two SQL engines, and three separate problems: rendered-row semantics, a tenant filter the optimizer didn't push into the scan, and PostgreSQL behavior under concurrent load."
 author: "Pranav Nedungadi"
-tags: ["PostgreSQL", "SQL", "Performance", "Benchmarking"]
+tags: ["SQL", "PostgreSQL", "Apache Doris", "Performance"]
 ---
 
-# The Cost of Searching JSON Is Not Just Memory
+# A JSON Search That Returned the Right Rows and Scanned the Wrong Data
 
-Searching every field in a JSON document is an appealing product shortcut. Cast the document to text, lowercase it, and apply a substring predicate. No new search model, no field inventory, and newly added JSON keys become searchable automatically.
+The request was reasonable. Users wanted to search inside an investigation's JSON, not just its title. The identifiers they remembered, like an IP address, were already stored there. Nobody should need to know which nested field holds the value they're looking for.
 
-I investigated that approach using actual application-shaped documents in a local PostgreSQL benchmark. The result was not the simple story I expected. The single-query memory increase was modest in the measured workload. The CPU work and concurrent latency were much less forgiving.
+The first implementation looked reasonable too: cast the JSON to text and run a case-insensitive substring match. Things got complicated when that one predicate met a multi-tenant list endpoint with grouped rows, two database engines (PostgreSQL and a columnar store), and separate page and count queries.
 
-## Serialization is part of the predicate
+I came out of it with a real query-plan fix, a clearer search contract, and a set of benchmarks that told me something less comfortable: arbitrary substring search over JSON wasn't cheap enough to switch on without limits.
 
-For a JSONB substring search, PostgreSQL has to turn evaluated values into text before matching the pattern. Large out-of-line values may need detoasting. Case-insensitive matching can add more text processing.
+## The list is a projection, not a table
 
-A primary-key lookup somewhere in the query does not prove only one document will be evaluated. The outer candidate set and the planner's chosen shape still matter. Likewise, writing a selective predicate first in an `OR` expression is not a guarantee that expensive predicates execute last.
+An investigation can have several executions. The list shows the newest relevant one, collapses related rows, and reveals children only when you expand a parent.
 
-The only useful answer comes from the actual SQL and its plan.
+Search has to respect that. If an *old* execution mentions an IP address but the one on screen doesn't, matching on the old JSON produces a row that seems to have nothing to do with your query. If a child matches, its parent needs to stay visible, but expanding the parent shouldn't dump every unrelated child.
 
-## A bounded local measurement
+The page, the total count, group membership, and ancestor visibility all have to follow the same rule. Each branch of the SQL can be individually correct while the endpoint as a whole is inconsistent, because the branches disagree about what a row *means*.
 
-I first seeded 50,000 rows from a small set of application document shapes. Average serialized size was about 14 KB, with the largest around 30 KB. This was roughly 669 MiB of logical JSON text, not 50,000 uniformly large synthetic blobs.
+```mermaid
+flowchart TD
+    R[Execution rows] --> D[Choose represented execution]
+    D --> S[Apply search to represented data]
+    S --> G[Resolve matching groups and children]
+    G --> P[Sort and paginate]
+    G --> C[Count matching visible rows]
+```
 
-In that warm-cache setup, no-match and all-match substring scans took roughly 5.6 to 5.8 seconds. Four concurrent no-match scans each took roughly 6 to 6.4 seconds. The container's observed anonymous-memory increase was in the tens of MiB, and no OOM occurred.
+That's the logical order. The optimizer can execute it however it likes, which turned out to matter.
 
-Those observations do not mean JSON search is cheap. They mean this particular scan was not retaining the entire serialized corpus in backend memory. File cache, shared buffers, backend RSS, and private anonymous memory measure different things. Adding backend RSS values can double-count shared pages.
+## A tenant filter that was correct and still too slow
 
-## The list endpoint is not the isolated scan
+The columnar store keeps many tenants in shared tables. One expensive subquery had exactly the right tenant condition:
 
-The next workload used 500,000 rows and a list-like query with filtering, deduplication, sorting, and separate page/count work. Under 20 concurrent persistent connections, the completed requests in a partial run had a median around 304 seconds.
+```sql
+EXISTS (
+    SELECT 1
+    FROM executions e
+    WHERE e.tenant_id = visible.tenant_id
+      AND e.id = visible.execution_id
+      AND LOWER(CAST(e.analysis AS STRING)) LIKE '%needle%'
+)
+```
 
-That run was stopped early: 120 requests completed, 20 active queries were intentionally canceled, and 860 queued requests never ran. It was not a completed 1,000-request benchmark, and those latency numbers describe only the successful subset.
+Logically, that can never return another tenant's data. Physically, the engine planned the correlation as a semi-join and didn't push the tenant condition down into the scan. So it could serialize and search JSON for a much larger population before the join threw the irrelevant rows away.
 
-It also was not directly comparable to the simpler 50,000-row scan. Both dataset size and query shape changed. The lesson is narrower: a predicate that survives a single-query memory check can still produce an unusable list endpoint under contention.
+The fix was to repeat the already-authorized tenant set inside the subquery, so the scan gets its own predicate:
 
-## Index the representation you query
+```sql
+AND e.tenant_id IN ('tenant_a', 'tenant_b')
+```
 
-A native JSONB GIN index is not automatically an index for arbitrary substring search over the document's serialized text. A trigram index on a matching text expression can help, but short or broad search terms and heap rechecks still matter.
+That set is bound from server-side authorization, never taken from the browser. And I didn't trust the SQL text alone. I checked the scan predicates in the plan to confirm the restriction actually reached the scan. Adding a condition to a query doesn't prove the optimizer used it where you hoped.
 
-Full-text search changes semantics too. Token search is not the same as matching an arbitrary fragment of an identifier. Decide which behavior the product needs before choosing an index.
+That gave me a distinction I keep using: **tenant isolation protects the result; tenant pruning limits the work needed to produce it.** A multi-tenant query needs both.
 
-A maintained search projection can avoid repeated JSON serialization. Its cost moves to writes and backfills, and every mutation path must refresh it. That tradeoff is often worthwhile, but it is not free.
+## PostgreSQL told a different story
 
-## Benchmark the request contract
+The PostgreSQL path needed its own numbers, so I built a local benchmark. The first dataset had **50,000 rows** generated from a handful of real document shapes. Serialized JSON averaged about 14 KB, peaked around 30 KB, and came to roughly 669 MiB of text in total.
 
-I now want four things before calling this kind of search safe: the actual page and count queries, realistic document sizes, representative search terms, and bounded concurrent load.
+Warm-cache substring scans, for both all-match and no-match terms, took about **5.6–5.8 seconds**. Four concurrent no-match scans each took about 6–6.4 seconds. Anonymous memory rose by only tens of MiB, with no OOM.
 
-I also want cancellation scoped to the benchmark's own connections. A test runner exiting does not guarantee its database queries stopped. A useful benchmark includes an exit plan, not just a stopwatch.
+That ruled out one fear: the scan wasn't holding the whole serialized corpus in memory. It didn't make the endpoint safe. JSON serialization still burns CPU and read bandwidth.
+
+Then I scaled up to something closer to the real endpoint:
+
+| Experiment | Observed result | Important limit |
+| --- | --- | --- |
+| 50,000 rows, simple scan | About 5.6 to 5.8 seconds | Warm cache, repeated document shapes |
+| Same scan, four concurrent callers | About 6 to 6.4 seconds each | Not the complete listing query |
+| 500,000 rows, list-like workload, 20 callers | Successful-request median about 304 seconds | Partial run, different query shape |
+
+The last row included filtering, deduplication, sorting, and the page and count queries. Of 1,000 planned requests, 120 completed, 20 in-flight queries were deliberately cancelled, and 860 never ran. That's not a finished load test, and the 120 that completed aren't a fair latency sample. Data size and query shape both changed between rows, so this isn't a scaling curve either.
+
+What the numbers do show is clear enough: checking memory on a single scan tells you nothing about how the endpoint behaves under concurrency.
+
+## Why the existing JSON index didn't help
+
+A JSONB containment index answers "does this document contain this structure?" That's a different question from arbitrary substring search over serialized text. A trigram index on a matching expression can help PostgreSQL, but short terms, broad terms, and heap rechecks all eat into it.
+
+A maintained search projection would avoid re-serializing on every query. Its cost moves to every write: each change to searchable content has to refresh the projection, plus a backfill. That's a real option, but this benchmark didn't measure it.
+
+The columnar store had its own representation and indexing limits, so copying the PostgreSQL approach wasn't a plan for both engines either.
+
+## Where it landed
+
+I fixed the missing physical tenant restriction and verified it in the scan predicates. I wrote down the search contract around represented executions and grouped children, so the page, count, and expansion queries all agree. Neither of those meant the full endpoint would stay responsive under production concurrency.
+
+What was left was a product and query-design decision, with real numbers behind it: narrow what's searchable, maintain an indexed representation, or accept bounded expensive searches. "The query returns the right rows" had stopped being enough to choose between those.
