@@ -45,23 +45,36 @@ yarn dev
 
 ## Customization
 
-All personal data is stored in the app/data directory for easy modification:
+Personal data lives in `src/data/`:
 
-- skills.ts - Add/modify your technical skills
-- experience.ts - Update your work experience
-- projects.ts - Add your projects
-- social.ts - Update your social media links
+- `basic.ts`: name, role, contact links
+- `experience.ts`: work history
+- `projects.ts`: projects
+- `skills.ts`: toolbox
+
+Blog posts are Markdown files in `public/blogs/`.
 
 ## Project Structure
 
+```
+src/
+├── app/          # Routes only: pages, layout, metadata, OG images, feeds
+├── components/   # Shared UI (article/ holds blog-post widgets)
+├── sections/     # Home page sections: Intro, Experience, Projects, …
+├── data/         # Personal content
+├── lib/          # Server helpers: blog loading, Markdown, OG cards
+├── theme/        # Light/dark scheme state and the build-time palette
+├── styles/       # CSS: tokens, base, components, sections, blog
+└── types/        # Shared TypeScript types
+```
 
-app/
-├── components/     # Reusable UI components
-├── data/          # Personal information and content
-├── parts/         # Major section components
-├── types/         # TypeScript interfaces
-└── utils/         # Helper functions
+### Colour system
 
+`src/styles/tokens.css` defines two 12-step scales (`sage` neutral, `blue`
+accent) as `light-dark()` pairs, and semantic tokens (`--paper`, `--ink`,
+`--line`, `--signal`, …) that components use. To change the palette, edit the
+scale steps there and mirror them in `src/theme/palette.ts`, which feeds the
+social cards, icon and browser theme colour.
 
 ## Contributing
 

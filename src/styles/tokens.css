@@ -1,0 +1,114 @@
+/*
+ * Design tokens.
+ *
+ * Two layers:
+ *
+ * 1. Palette: two scales, `sage` (neutral) and `blue` (accent). Step numbers
+ *    follow the 12-step convention, each step with one job:
+ *      1  app background        6  subtle border      11  low-contrast text
+ *      2  raised background     7  border             12  high-contrast text
+ *      3  element background    8  strong border / decoration
+ *      9  solid accent
+ *    Only the steps the site uses are defined. Every step is a
+ *    `light-dark()` pair, so a scale already knows both schemes and nothing
+ *    has to be redeclared per theme.
+ *
+ * 2. Semantic tokens: what components use. They map roles (paper, ink,
+ *    line, signal…) onto palette steps. Components never touch the palette.
+ *
+ * Scheme scopes: `data-scheme="dark|light"` pins a subtree to one scheme
+ * (the contact band is dark in both themes). The token block is declared on
+ * those elements as well as :root because the build (Lightning CSS) rewrites
+ * light-dark() into var() switches, and var() inside a custom property is
+ * substituted where the property is declared. Re-declaring the block in the
+ * scope makes it resolve with that scope's switches. For the same reason,
+ * do not register these tokens with @property.
+ *
+ * src/theme/palette.ts mirrors the few values needed at build time (social
+ * cards, icons, browser chrome). Keep the two in sync.
+ */
+
+:root,
+[data-scheme] {
+  /* ------------------------------------------------------------ palette */
+
+  --sage-1: light-dark(oklch(0.935 0.013 140), oklch(0.17 0.012 165));
+  --sage-2: light-dark(oklch(0.905 0.015 140), oklch(0.205 0.014 165));
+  --sage-3: light-dark(oklch(0.875 0.017 140), oklch(0.245 0.015 165));
+  --sage-6: light-dark(oklch(0.82 0.016 140), oklch(0.3 0.014 165));
+  --sage-7: light-dark(oklch(0.69 0.018 145), oklch(0.41 0.015 165));
+  --sage-8: light-dark(oklch(0.58 0.02 150), oklch(0.48 0.02 160));
+  --sage-11: light-dark(oklch(0.47 0.018 155), oklch(0.67 0.014 150));
+  --sage-12: light-dark(oklch(0.22 0.02 165), oklch(0.93 0.012 130));
+
+  --blue-9: light-dark(oklch(0.5 0.16 262), oklch(0.72 0.12 258));
+  --blue-11: light-dark(oklch(0.44 0.15 262), oklch(0.77 0.1 255));
+
+  /* ----------------------------------------------------------- surfaces */
+
+  --paper: var(--sage-1);
+  --paper-2: var(--sage-2);
+  --paper-3: var(--sage-3);
+  /* Dark band (contact) that sits below the page in both schemes. */
+  --surface-inverse: light-dark(oklch(0.22 0.02 165), oklch(0.13 0.011 165));
+
+  /* --------------------------------------------------------------- text */
+
+  --ink: var(--sage-12);
+  --ink-2: color-mix(in oklab, var(--sage-11), var(--sage-12));
+  --muted: var(--sage-11);
+  /* Text on an --ink background. */
+  --on-ink: var(--sage-1);
+
+  /* ------------------------------------------------------------ borders */
+
+  --line: var(--sage-6);
+  --line-strong: var(--sage-7);
+
+  /* ------------------------------------------------------------- accent */
+
+  --signal: var(--blue-9);
+  --signal-ink: var(--blue-11);
+  --signal-wash: color-mix(in oklab, var(--blue-9) 11%, transparent);
+
+  /* ------------------------------------------------------------ effects */
+
+  --shadow: oklch(0.1 0.015 165 / 0.35);
+  --grid-dot: color-mix(in oklab, var(--sage-8) 50%, transparent);
+  --glow: light-dark(oklch(0.86 0.06 200 / 0.4), oklch(0.55 0.1 220 / 0.26));
+  --glow-surface: light-dark(
+    oklch(0.86 0.06 200 / 0.28),
+    oklch(0.55 0.1 220 / 0.2)
+  );
+  --ambient-a: light-dark(
+    oklch(0.85 0.05 195 / 0.4),
+    oklch(0.38 0.07 220 / 0.26)
+  );
+  --ambient-b: light-dark(
+    oklch(0.88 0.04 120 / 0.35),
+    oklch(0.34 0.05 150 / 0.22)
+  );
+}
+
+:root {
+  color-scheme: light dark;
+}
+/* An explicit choice overrides the OS preference. */
+:root[data-theme="light"],
+[data-scheme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"],
+[data-scheme="dark"] {
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------- layout */
+
+:root {
+  --gutter: clamp(1rem, 4.5vw, 4rem);
+  --page: 76rem;
+  --header-h: 3.75rem;
+  --glow-size: 640px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

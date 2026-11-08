@@ -1,0 +1,85 @@
+.diagram {
+  margin-block: 2.25em;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.diagram__viewport {
+  position: relative;
+  overflow: auto;
+  max-height: min(80svh, 48rem);
+  padding: 1.5rem 1rem;
+  overscroll-behavior-x: contain;
+}
+.diagram__svg {
+  display: flex;
+  justify-content: center;
+  width: max-content;
+  min-width: 100%;
+}
+.diagram__svg svg {
+  display: block;
+  flex: none;
+}
+.diagram__viewport[data-overflowing="true"] {
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+.diagram__loading {
+  height: 12rem;
+  background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--paper-3) 70%, transparent),
+      transparent
+    )
+    0 0 / 50% 100% no-repeat;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: -50% 0;
+  }
+  to {
+    background-position: 150% 0;
+  }
+}
+.diagram--failed pre {
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+}
+.diagram-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem
+    max(0.75rem, env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--paper) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .diagram-overlay__panel {
+    animation: rise 300ms var(--ease-out);
+  }
+}
+.diagram-overlay__panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(100%, 90rem);
+  max-height: 100%;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-2);
+  box-shadow: 0 24px 80px -20px var(--shadow);
+}
+.diagram-overlay__canvas {
+  overflow: auto;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  overscroll-behavior: contain;
+}
+.diagram-overlay__canvas svg {
+  display: block;
+  margin-inline: auto;
+  max-width: none !important;
+}

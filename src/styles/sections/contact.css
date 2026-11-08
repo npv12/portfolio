@@ -1,0 +1,154 @@
+/*
+ * The contact band is dark in both schemes. Its background follows the page
+ * scheme (--surface-inverse); its content is a dark scheme scope
+ * (data-scheme="dark", see tokens.css), so every token inside resolves to
+ * its dark value.
+ */
+.contact {
+  padding-block: clamp(4rem, 10vw, 8rem) clamp(2.5rem, 6vw, 4rem);
+  background: var(--surface-inverse);
+}
+.contact__body {
+  color: var(--ink);
+}
+.contact .section__index {
+  color: color-mix(in oklab, var(--ink) 60%, transparent);
+}
+.contact .section__index::after {
+  background: color-mix(in oklab, var(--ink) 30%, transparent);
+}
+.contact .section__index b {
+  color: var(--signal);
+}
+.contact__title {
+  margin-top: 1.5rem;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+  max-width: 14ch;
+}
+.contact__title span {
+  color: var(--signal);
+}
+.contact__lede {
+  margin-top: 1.25rem;
+  max-width: 48ch;
+  color: color-mix(in oklab, var(--ink) 75%, transparent);
+  line-height: 1.7;
+}
+.contact__email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+}
+.contact__email a {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 4.6vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--signal);
+  overflow-wrap: anywhere;
+  transition: color 150ms;
+}
+.contact__email a:hover {
+  color: var(--signal);
+}
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding-inline: 0.875rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    border-color 150ms,
+    background 150ms;
+}
+.copy-button:hover {
+  border-color: var(--ink);
+}
+.copy-button[data-copied="true"] {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+.copy-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+.contact__channels {
+  display: grid;
+  margin-top: 3rem;
+  border-top: 1px solid var(--line);
+}
+.contact__channels a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 1rem;
+  font-weight: 500;
+  transition:
+    color 150ms,
+    padding 250ms var(--ease-out);
+}
+.contact__channels a span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.contact__channels a svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+.contact__channels a .inline-icon {
+  display: inline;
+  width: 0.875rem;
+  height: 0.875rem;
+  vertical-align: -0.125em;
+}
+.contact__channels a .mono {
+  color: color-mix(in oklab, var(--ink) 55%, transparent);
+}
+.contact__channels a:hover {
+  color: var(--signal);
+}
+@media (hover: hover) {
+  .contact__channels a:hover {
+    padding-left: 0.5rem;
+  }
+}
+@media (min-width: 768px) {
+  .contact__channels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+}
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-bottom: env(safe-area-inset-bottom);
+  color: color-mix(in oklab, var(--ink) 55%, transparent);
+}
+.site-footer a {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.site-footer a:hover {
+  color: var(--ink);
+}

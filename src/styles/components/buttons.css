@@ -1,0 +1,46 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding-inline: 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: 1px solid var(--ink);
+  transition:
+    background 150ms,
+    color 150ms,
+    border-color 150ms,
+    transform 150ms var(--ease-out);
+}
+.button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+}
+.button:active {
+  transform: translateY(1px);
+}
+.button--primary {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.button--primary:hover {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--on-ink);
+}
+.button--ghost {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.button--ghost:hover {
+  border-color: var(--ink);
+  background: var(--paper-2);
+}
+@media (max-width: 479px) {
+  .hero__actions .button {
+    flex: 1 1 100%;
+  }
+}

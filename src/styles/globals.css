@@ -1,0 +1,35 @@
+/*
+ * Stylesheet entry point. Files are imported in cascade order: tokens and
+ * base first, then shared components, home sections, blog, and finally
+ * effects and motion. Reordering can change which rule wins.
+ */
+
+@import "tailwindcss";
+
+@import "./tokens.css";
+@import "./base.css";
+
+@import "./components/header.css";
+@import "./sections/hero.css";
+@import "./components/buttons.css";
+@import "./components/sphere.css";
+
+@import "./sections/section.css";
+@import "./sections/experience.css";
+@import "./sections/projects.css";
+@import "./sections/writing.css";
+@import "./sections/toolbox.css";
+@import "./sections/contact.css";
+
+@import "./blog/index.css";
+@import "./blog/post.css";
+@import "./blog/toc.css";
+@import "./blog/prose.css";
+@import "./blog/code.css";
+@import "./blog/diagram.css";
+@import "./blog/post-footer.css";
+
+@import "./components/backdrop.css";
+@import "./motion.css";
+
+@plugin "@tailwindcss/typography";

@@ -1,0 +1,68 @@
+.sphere {
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sphere__stage {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  touch-action: pan-y;
+  cursor: grab;
+  contain: layout paint;
+}
+.sphere__stage[data-dragging="true"] {
+  cursor: grabbing;
+}
+.sphere__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--line-strong);
+  pointer-events: none;
+  overflow: visible;
+}
+.sphere__item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: var(--icon-box, 2.5rem);
+  height: var(--icon-box, 2.5rem);
+  margin: calc(var(--icon-box, 2.5rem) / -2) 0 0
+    calc(var(--icon-box, 2.5rem) / -2);
+  color: var(--ink);
+  will-change: transform, opacity;
+  transition: color 200ms;
+  opacity: 0;
+}
+.sphere__item svg {
+  width: 62%;
+  height: 62%;
+}
+.sphere__item[data-front="true"] {
+  color: var(--signal);
+}
+.sphere__readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+.sphere__readout output {
+  color: var(--ink);
+  font-weight: 500;
+}
+.sphere__readout output::before {
+  content: "→ ";
+  color: var(--signal);
+}
