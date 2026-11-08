@@ -2,6 +2,20 @@ import { Project } from "@/types/projects";
 
 const projects: Project[] = [
   {
+    title: "Agent harness",
+    category: "At Simbian / Agent platform",
+    focus: "Running long-lived agents for many tenants, safely and cheaply.",
+    description:
+      "The runtime around the model: a thin orchestrator that owns every policy decision, jailed sandboxes that only execute, and a shared filesystem that holds all session state, so any worker can resume any session.",
+    highlights: [
+      "Single event inbox for humans, webhooks, and other sessions, drained before every model call so agents can change course mid-turn.",
+      "Prompt-cache-first design: a static prompt prefix, deferred tool loading, append-only history, and forks that reuse the parent's cache.",
+      "Context pipeline from cheap truncation to persisted summaries, plus per-session permissions, budgets, sub-agents, and cooperative cancellation.",
+    ],
+    blogLink: "/blogs/agent-harness-architecture",
+    tags: ["Python", "Strands Agents", "MCP", "nsjail", "gRPC"],
+  },
+  {
     title: "NeuroSpend",
     category: "Personal project / Finance",
     focus: "Turning bank statements into useful financial data.",
