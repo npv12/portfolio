@@ -59,7 +59,7 @@ const projects: Project[] = [
     tags: ["Go", "Karmada", "Kubernetes", "GCP"],
   },
   {
-    title: "Configurable agent workflows",
+    title: "Shortcuts",
     category: "At Simbian / Backend platform",
     focus: "Customer-defined automation with explicit boundaries.",
     description:
