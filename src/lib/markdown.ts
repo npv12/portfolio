@@ -21,12 +21,17 @@ const escapeHtml = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-const plainText = (value: string) =>
-  value
-    .replace(/<[^>]+>/g, "")
+const plainText = (value: string) => {
+  let previous: string;
+  do {
+    previous = value;
+    value = value.replace(/<[^>]+>/g, "");
+  } while (value !== previous);
+  return value
     .replace(/[`*_~]/g, "")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .trim();
+};
 
 const slugify = (value: string) =>
   plainText(value)
